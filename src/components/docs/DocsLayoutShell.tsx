@@ -12,6 +12,8 @@ import type { Heading, SidebarSection } from "@/lib/mdx";
 import { DocsSidebar } from "@/components/docs/DocsSidebar";
 import { TableOfContents } from "@/components/docs/TableOfContents";
 import { Navbar } from "@/components/layout/Navbar";
+import { EditOnGitHub } from "@/components/docs/EditOnGitHub";
+import { ExportMarkdown } from "@/components/docs/ExportMarkdown";
 
 // Use production URL for AI assistant links
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://offer-hub.tech";
@@ -120,7 +122,11 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
             </nav>
 
             {/* "Copy" Component - Compact, Neumorphic, Aligned */}
-            <div className="flex items-center justify-start md:justify-end">
+            <div className="flex items-center justify-start md:justify-end gap-x-6">
+              <div className="hidden sm:flex items-center gap-x-6 mr-2">
+                <EditOnGitHub filePath={`content/docs/${pathname.replace("/docs/", "")}.mdx`} />
+                <ExportMarkdown slug={pathname.replace("/docs/", "")} />
+              </div>
               <DocActionsMenu slug={pathname.replace("/docs/", "")} />
             </div>
           </div>
