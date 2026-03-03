@@ -40,7 +40,8 @@ export default function RegistrationForm() {
                     {
                         email: formData.email,
                         name: formData.name,
-                        company: `${formData.purpose} | Source: ${formData.referral}`
+                        purpose: formData.purpose,
+                        referral: formData.referral
                     }
                 ]);
 
