@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase, isSupabaseConfigured } from './supabase';
 
 // Generate a unique visitor ID (fingerprint)
 export function generateVisitorId(): string {
@@ -133,8 +133,8 @@ export async function getGeolocation() {
 
 // Track page view
 export async function trackPageView(pagePath: string, pageTitle?: string) {
-  // Skip tracking if Supabase is not configured (e.g., during build)
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  // Skip tracking if Supabase is not properly configured
+  if (!isSupabaseConfigured) {
     return;
   }
 
