@@ -38,9 +38,9 @@
 
 .dark {
   /* Backgrounds */
-  --color-bg-base: #1a1a2e;
-  --color-bg-elevated: #25253d;
-  --color-bg-sunken: #12121f;
+  --color-bg-base: #242433;
+  --color-bg-elevated: #2e2e3f;
+  --color-bg-sunken: #1a1a26;
 
   /* Text */
   --color-text-primary: #f1f3f7;
@@ -50,10 +50,16 @@
   /* Brand */
   --color-primary: #1fb8b9;
   --color-primary-hover: #25d4d5;
+  --color-accent: #15949C;
+
+  /* Semantic */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #FF0000;
 
   /* Neumorphic shadows for dark */
-  --shadow-dark: #0f0f1a;
-  --shadow-light: #252540;
+  --shadow-dark: #1a1a26;
+  --shadow-light: #2e2e3f;
 
   /* Borders */
   --color-border: #3d3d5c;
@@ -219,6 +225,55 @@ body::before {
       inset 4px 4px 8px #d1d5db,
       inset -4px -4px 8px #ffffff;
     transform: translateY(4px);
+  }
+
+  /* ── Dark Mode Neumorphic Buttons ── */
+  .dark .btn-neumorphic-primary {
+    background: #1fb8b9;
+    box-shadow:
+      6px 6px 12px #1a1a26,
+      -6px -6px 12px #2e2e3f,
+      inset 2px 2px 5px rgba(255, 255, 255, 0.15),
+      inset -3px -3px 7px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .btn-neumorphic-primary:hover {
+    background: #25d4d5;
+    box-shadow:
+      3px 3px 6px #1a1a26,
+      -3px -3px 6px #2e2e3f,
+      inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+      inset -2px -2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .dark .btn-neumorphic-primary:active {
+    background: #149A9B;
+    box-shadow:
+      inset 5px 5px 10px rgba(0, 0, 0, 0.4),
+      inset -5px -5px 10px rgba(255, 255, 255, 0.05);
+  }
+
+  .dark .btn-neumorphic-secondary {
+    background: #242433;
+    box-shadow:
+      6px 6px 12px #1a1a26,
+      -6px -6px 12px #2e2e3f,
+      inset 1px 1px 2px rgba(255, 255, 255, 0.1),
+      inset -1px -1px 2px rgba(0, 0, 0, 0.2);
+    color: #f1f3f7;
+  }
+
+  .dark .btn-neumorphic-secondary:hover {
+    box-shadow:
+      3px 3px 6px #1a1a26,
+      -3px -3px 6px #2e2e3f,
+      inset 1px 1px 2px rgba(255, 255, 255, 0.15);
+  }
+
+  .dark .btn-neumorphic-secondary:active {
+    box-shadow:
+      inset 4px 4px 8px #1a1a26,
+      inset -4px -4px 8px #2e2e3f;
   }
 }
 
