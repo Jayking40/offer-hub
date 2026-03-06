@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Send } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const navLinks = [
   { href: "/#features", label: "Features" },
@@ -120,6 +121,7 @@ export function Navbar() {
 
             {/* ── Desktop CTAs ── */}
             <div className="hidden lg:flex items-center gap-3">
+              <ThemeToggle />
               <a
                 href="#waitlist-form"
                 className="px-6 py-2 rounded-full text-sm font-semibold btn-neumorphic-primary flex items-center gap-2 group"
@@ -193,7 +195,11 @@ export function Navbar() {
               })}
             </div>
 
-            <div className="mt-6 pt-6 border-t border-[#d1d5db]/50">
+            <div className="mt-6 pt-6 border-t border-[#d1d5db]/50 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-[#6D758F]">Theme</span>
+                <ThemeToggle />
+              </div>
               <a
                 href="#waitlist-form"
                 onClick={() => setIsMenuOpen(false)}

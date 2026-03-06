@@ -6,6 +6,7 @@ import Analytics from "@/components/Analytics";
 import { ClientBackground } from "@/components/layout/ClientBackground";
 import { NavigationProgress } from "@/components/ui/NavigationProgress";
 import { FloatingCTA } from "@/components/ui/FloatingCTA";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,15 +27,17 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className={`${inter.className} antialiased relative min-h-screen`}>
-        <Suspense fallback={null}>
-          <NavigationProgress />
-        </Suspense>
-        <Analytics />
-        <ClientBackground />
-        {children}
-        <FloatingCTA />
+        <ThemeProvider>
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
+          <Analytics />
+          <ClientBackground />
+          {children}
+          <FloatingCTA />
+        </ThemeProvider>
       </body>
     </html>
   );
