@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -25,6 +26,17 @@ const config: Config = {
         success: "#16a34a",
         warning: "#d97706",
         error: "#FF0000",
+        // Theme-aware colors using CSS variables
+        bg: {
+          base: "var(--bg-base)",
+        },
+        content: {
+          primary: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+        },
+        theme: {
+          border: "var(--border-color)",
+        },
       },
       keyframes: {
         fadeInUp: {
@@ -47,6 +59,11 @@ const config: Config = {
         "sunken-subtle": "inset 2px 2px 4px #d1d5db, inset -2px -2px 4px #ffffff",
         neu: "4px 4px 8px #d1d5db, -4px -4px 8px #ffffff",
         "neu-inset": "inset 4px 4px 8px #d1d5db, inset -4px -4px 8px #ffffff",
+        // Theme-aware neumorphic shadows
+        "neu-raised": "var(--shadow-neu-raised)",
+        "neu-raised-scrolled": "var(--shadow-neu-raised-scrolled)",
+        "neu-sunken": "var(--shadow-neu-sunken)",
+        "neu-sunken-subtle": "var(--shadow-neu-sunken-subtle)",
       },
     },
   },

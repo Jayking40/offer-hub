@@ -2,9 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   CSS VARIABLES FOR THEME SUPPORT (Light & Dark Mode)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Light mode colors */
+  --bg-base: #F1F3F7;
+  --text-primary: #19213D;
+  --text-secondary: #6D758F;
+  --border-color: #d1d5db;
+  
+  /* Light mode neumorphic shadows */
+  --shadow-dark: #d1d5db;
+  --shadow-light: #ffffff;
+  --shadow-neu-raised: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+  --shadow-neu-raised-scrolled: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+  --shadow-neu-sunken: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  --shadow-neu-sunken-subtle: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+}
+
+.dark {
+  /* Dark mode colors */
+  --bg-base: #1a1a2e;
+  --text-primary: #e4e4e7;
+  --text-secondary: #a1a1aa;
+  --border-color: #3f3f46;
+  
+  /* Dark mode neumorphic shadows */
+  --shadow-dark: #0f0f1a;
+  --shadow-light: #252540;
+  --shadow-neu-raised: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+  --shadow-neu-raised-scrolled: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+  --shadow-neu-sunken: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  --shadow-neu-sunken-subtle: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+}
+
 /* Subtle page background — faint teal corner glows only (Dot grid handled by React) */
 body {
-  background-color: #F1F3F7;
+  background-color: var(--bg-base);
+  transition: background-color 300ms ease-out;
 }
 
 body::before {
