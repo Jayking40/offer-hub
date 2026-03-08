@@ -103,15 +103,15 @@ Response:
 
 ### List Response
 
-<CodeBlock language="json">
+```json
 {
-  "data": [...],
+  "data": ["..."],
   "pagination": {
     "has_more": true,
     "next_cursor": "ord_abc123"
   }
 }
-</CodeBlock>
+```
 
 ### Error Response
 
@@ -346,7 +346,7 @@ GET /orders?limit=20&cursor=ord_xyz789
 
 ```json
 {
-  "data": [...],
+  "data": ["..."],
   "pagination": {
     "has_more": true,
     "next_cursor": "ord_abc123"
@@ -379,7 +379,7 @@ POST /orders
 Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000
 Content-Type: application/json
 
-{...}
+{ "order_data": "..." }
 ```
 
 ### Behavior
