@@ -101,6 +101,13 @@ export function MermaidDiagram({
               compositeTitleBackground: "#3d3d5c",
               compositeBackground: "#1a1a2e",
               compositeBorder: "#3d3d5c",
+              // Sequence diagram specific
+              noteBkgColor: "#25253d",
+              noteTextColor: "#f1f3f7",
+              noteBorderColor: "#3d3d5c",
+              actorBkg: "#25253d",
+              actorTextColor: "#f1f3f7",
+              actorBorder: "#3d3d5c",
             }
           : {
               // Primary colors - light teal background with dark text
