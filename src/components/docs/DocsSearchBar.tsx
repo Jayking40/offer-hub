@@ -136,7 +136,7 @@ export default function DocsSearchBar() {
             </div>
 
             {isOpen && results.length > 0 && (
-                <div className="absolute top-full mt-3 w-full rounded-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200" style={{ background: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(12px)" }}>
+                <div className="absolute top-full mt-3 w-full rounded-2xl overflow-hidden z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.05)] animate-in fade-in slide-in-from-top-2 duration-200" style={{ background: "rgba(255, 255, 255, 0.98)", backdropFilter: "blur(16px)" }}>
                     <div className="max-h-[450px] overflow-y-auto">
                         {results.map((result, idx) => (
                             <div
@@ -188,7 +188,7 @@ export default function DocsSearchBar() {
             )}
 
             {isOpen && query.length > 1 && results.length === 0 && (
-                <div className="absolute top-full mt-3 w-full rounded-2xl p-8 text-center z-50 animate-in fade-in slide-in-from-top-2" style={{ background: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(12px)" }}>
+                <div className="absolute top-full mt-3 w-full rounded-2xl p-8 text-center z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.05)] animate-in fade-in slide-in-from-top-2" style={{ background: "rgba(255, 255, 255, 0.98)", backdropFilter: "blur(16px)" }}>
                     <p style={{ color: "#6D758F" }}>No results found for &quot;<span className="font-semibold">{query}</span>&quot;</p>
                     <p className="text-sm mt-1" style={{ color: "#9CA3AF" }}>Try a different search term</p>
                 </div>

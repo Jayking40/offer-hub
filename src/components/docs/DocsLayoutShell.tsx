@@ -49,6 +49,8 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [headings, setHeadings] = useState<Heading[]>([]);
 
+  const isHub = pathname === "/docs" || pathname === "/docs/";
+
   const pathSegments = useMemo(() => {
     const [, docs, ...rest] = pathname.split("/");
     if (docs !== "docs") return [];
@@ -60,6 +62,7 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
   }, [pathname]);
 
   useEffect(() => {
+    if (isHub) return;
     // Collect headings immediately
     setHeadings(collectHeadingsFromPage());
 
@@ -72,7 +75,17 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
     });
     observer.observe(root, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [pathname]);
+  }, [pathname, isHub]);
+
+  // Hub landing: full-width, no sidebar
+  if (isHub) {
+    return (
+      <div className="min-h-screen bg-transparent">
+        <Navbar />
+        {children}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-transparent">
