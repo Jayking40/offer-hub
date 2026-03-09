@@ -36,15 +36,26 @@ export default async function DocPage({ params }: PageProps) {
   return (
     <article className="min-w-0">
       {/* Page header */}
-      <div className="mb-12 pb-8 border-b border-[#D1D5DB]/30">
-        <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight" style={{ color: "#19213D" }}>
-          {doc.frontmatter.title}
-        </h1>
-        {doc.frontmatter.description && (
-          <p className="text-xl leading-relaxed font-medium" style={{ color: "#6D758F" }}>
-            {doc.frontmatter.description}
-          </p>
-        )}
+      <div className="mb-8 pb-6 border-b" style={{ borderColor: "#d1d5db" }}>
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2" style={{ color: "#19213D" }}>
+              {doc.frontmatter.title}
+            </h1>
+            {doc.frontmatter.description && (
+              <p className="text-base leading-relaxed" style={{ color: "#6D758F" }}>
+                {doc.frontmatter.description}
+              </p>
+            )}
+          </div>
+
+          <DocPageActions
+            slug={doc.slug}
+            title={doc.frontmatter.title}
+            description={doc.frontmatter.description}
+            markdownContent={doc.content}
+          />
+        </div>
       </div>
 
       {/* MDX content */}

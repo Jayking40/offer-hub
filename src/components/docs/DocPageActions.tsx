@@ -1,16 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Download, FileCode2, FileJson, FileText, Github } from "lucide-react";
+import { Download, FileCode2, FileText, Github } from "lucide-react";
 
-import type { DocFrontmatter } from "@/lib/mdx";
+import { ExportJSON } from "@/components/docs/ExportJSON";
 
 interface DocPageActionsProps {
   slug: string;
   title: string;
   description?: string;
   markdownContent: string;
-  frontmatter: DocFrontmatter;
 }
 
 const DOCS_REPO_BASE = "https://github.com/OFFER-HUB/offer-hub-monorepo/blob/main/content/docs";
@@ -31,28 +30,14 @@ function downloadBlob(filename: string, content: string, mimeType: string) {
   URL.revokeObjectURL(url);
 }
 
-export function DocPageActions({ slug, title, description, markdownContent, frontmatter }: DocPageActionsProps) {
+export function DocPageActions({ slug, title, description, markdownContent }: DocPageActionsProps) {
   const [isExportingPdf, setIsExportingPdf] = useState(false);
 
   const markdownFileName = useMemo(() => `${slug.replace(/\//g, "-")}-${dateStamp()}.md`, [slug]);
-  const jsonFileName = useMemo(() => `${slug.replace(/\//g, "-")}-${dateStamp()}.json`, [slug]);
   const pdfFileName = useMemo(() => `${slug.replace(/\//g, "-")}-${dateStamp()}.pdf`, [slug]);
 
   function handleExportMarkdown() {
     downloadBlob(markdownFileName, markdownContent, "text/markdown;charset=utf-8");
-  }
-
-  function handleExportJson() {
-    const payload = {
-      slug,
-      title,
-      description,
-      frontmatter,
-      content: markdownContent,
-      exportedAt: new Date().toISOString(),
-    };
-
-    downloadBlob(jsonFileName, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
   }
 
   async function handleExportPdf() {
@@ -212,15 +197,7 @@ export function DocPageActions({ slug, title, description, markdownContent, fron
         Export Markdown
       </button>
 
-      <button
-        type="button"
-        onClick={handleExportJson}
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors"
-        style={{ borderColor: "#d1d5db", color: "#19213D", background: "#ffffff" }}
-      >
-        <FileJson size={15} />
-        Export JSON
-      </button>
+      <ExportJSON slug={slug} title={title} />
 
       <button
         type="button"
