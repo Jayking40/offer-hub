@@ -1,57 +1,127 @@
 "use client";
 
-import { useState } from "react";
-import { Copy, Check, Terminal } from "lucide-react";
+import { useState, ReactNode } from "react";
+import { Check, Copy, Terminal } from "lucide-react";
+
 import { cn } from "@/lib/cn";
 
 interface CommandLineProps {
-  children: string;
+  command?: string;
+  label?: string;
+  promptSymbol?: string;
   className?: string;
+  children?: ReactNode;
 }
 
-export function CommandLine({ children, className }: CommandLineProps) {
+/**
+ * Recursively extract text content from React children.
+ * This handles MDX transformations that may convert URLs or text into React elements.
+ */
+function extractTextFromChildren(children: ReactNode): string {
+  if (children === null || children === undefined) {
+    return "";
+  }
+
+  if (typeof children === "string") {
+    return children;
+  }
+
+  if (typeof children === "number") {
+    return String(children);
+  }
+
+  if (Array.isArray(children)) {
+    return children.map(extractTextFromChildren).join("");
+  }
+
+  // Handle React elements (e.g., <a> tags from MDX URL processing)
+  if (typeof children === "object" && "props" in children) {
+    const element = children as { props?: { children?: ReactNode; href?: string } };
+    // For anchor tags, prefer href as it contains the actual URL
+    if (element.props?.href && !element.props?.children) {
+      return element.props.href;
+    }
+    return extractTextFromChildren(element.props?.children);
+  }
+
+  return "";
+}
+
+export function CommandLine({
+  command,
+  label,
+  promptSymbol = "$",
+  className,
+  children,
+}: CommandLineProps) {
   const [copied, setCopied] = useState(false);
 
-  const command = typeof children === "string" ? children.trim() : String(children ?? "").trim();
+  const raw = command ?? extractTextFromChildren(children);
+  const trimmed = raw.trim();
 
   async function handleCopy() {
-    await navigator.clipboard.writeText(command);
+    await navigator.clipboard.writeText(trimmed);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
 
   return (
     <div
-      className={cn("flex items-center justify-between rounded-xl px-4 py-3 my-4 shadow-sunken", className)}
-      style={{ background: "#002333" }}
+      className={cn(
+        // Layout & shape
+        "my-4 rounded-xl",
+        // Theme-aware background + neumorphic sunken effect
+        "bg-bg-sunken shadow-neu-sunken-subtle",
+        // Theme-aware border
+        "border border-theme-border",
+        // Typography base
+        "text-sm font-mono",
+        className,
+      )}
     >
-      <div className="flex items-center gap-3 min-w-0">
-        <Terminal size={14} style={{ color: "#149A9B", flexShrink: 0 }} />
-        <span
-          className="text-sm font-mono"
-          style={{ color: "rgba(255,255,255,0.5)" }}
+      {label && (
+        <div className="flex items-center justify-between px-4 pt-3 pb-1 text-xs text-content-muted">
+          <span>{label}</span>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between gap-3 px-4 py-3">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <Terminal
+            size={14}
+            className="flex-shrink-0 text-theme-primary"
+            aria-hidden="true"
+          />
+          <span className="text-sm text-theme-primary flex-shrink-0">
+            {promptSymbol}
+          </span>
+          <div className="relative flex-1 overflow-x-auto">
+            <code className="block whitespace-nowrap text-sm text-content-primary pr-2">
+              {trimmed}
+            </code>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleCopy}
+          aria-label={copied ? "Command copied" : "Copy command"}
+          className={cn(
+            "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium flex-shrink-0",
+            "transition-all duration-200",
+            copied
+              ? "text-theme-success"
+              : "text-content-secondary hover:text-content-primary",
+          )}
         >
-          $
-        </span>
-        <span
-          className="text-sm font-mono truncate"
-          style={{ color: "#a5f3fc" }}
-        >
-          {command}
-        </span>
+          {copied ? (
+            <Check size={13} aria-hidden="true" />
+          ) : (
+            <Copy size={13} aria-hidden="true" />
+          )}
+          <span>{copied ? "Copied" : "Copy"}</span>
+        </button>
       </div>
-      <button
-        onClick={handleCopy}
-        aria-label="Copy command"
-        className={cn(
-          "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ml-3 flex-shrink-0",
-          "transition-all duration-200",
-          copied ? "text-green-400" : "text-white/40 hover:text-white/80"
-        )}
-      >
-        {copied ? <Check size={13} /> : <Copy size={13} />}
-        {copied ? "Copied!" : "Copy"}
-      </button>
     </div>
   );
 }

@@ -1,6 +1,3 @@
-"use client";
-
-import { motion, type Variants } from "framer-motion";
 import { ArrowRight, GitMerge, Plus, Minus } from "lucide-react";
 
 export interface PullRequest {
@@ -35,22 +32,20 @@ function PRCardInline({ pr }: { pr: PullRequest }) {
       href={pr.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="block p-5 rounded-2xl shadow-raised transition-shadow duration-[400ms] ease-out hover:shadow-raised-hover active:shadow-sunken-subtle h-full"
-      style={{ background: "#F1F3F7" }}
+      className="block p-5 rounded-2xl bg-bg-base shadow-neu-raised transition-shadow duration-[400ms] ease-out hover:shadow-neu-raised-hover active:shadow-neu-sunken-subtle h-full"
     >
       {/* Header: PR number + Merged badge */}
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-semibold" style={{ color: "#149A9B" }}>
+        <span className="text-xs font-semibold text-theme-primary">
           #{pr.number}
           {pr.repository && (
-            <span className="ml-1 font-normal" style={{ color: "#6D758F" }}>
+            <span className="ml-1 font-normal text-content-secondary">
               · {pr.repository}
             </span>
           )}
         </span>
         <span
-          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold shadow-raised-sm"
-          style={{ background: "#dcfce7", color: "#15803d" }}
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold shadow-neu-raised-sm bg-green-500/10 text-green-600 dark:bg-green-500/20 dark:text-green-400"
         >
           <GitMerge size={11} />
           Merged
@@ -59,8 +54,7 @@ function PRCardInline({ pr }: { pr: PullRequest }) {
 
       {/* Title */}
       <h3
-        className="text-sm font-semibold leading-snug mb-3"
-        style={{ color: "#19213D" }}
+        className="text-sm font-semibold leading-snug mb-3 text-content-primary"
       >
         {pr.title}
       </h3>
@@ -71,12 +65,7 @@ function PRCardInline({ pr }: { pr: PullRequest }) {
           {pr.labels.map((label) => (
             <span
               key={label}
-              className="px-2 py-0.5 rounded-full text-[11px] font-medium shadow-raised-sm"
-              style={{
-                background: "#F1F3F7",
-                color: "#6D758F",
-                border: "1px solid #d1d5db",
-              }}
+              className="px-2 py-0.5 rounded-full text-[11px] font-medium shadow-neu-raised-sm bg-bg-base text-content-secondary border border-theme-border"
             >
               {label}
             </span>
@@ -88,35 +77,33 @@ function PRCardInline({ pr }: { pr: PullRequest }) {
       <div className="flex items-center justify-between mt-auto pt-1">
         <div className="flex items-center gap-2">
           <div
-            className="w-7 h-7 rounded-full shadow-raised-sm flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0 select-none"
+            className="w-7 h-7 rounded-full shadow-neu-raised-sm flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0 select-none"
             style={{ background: avatarColor }}
             aria-label={`Avatar for ${pr.author}`}
           >
             {initials}
           </div>
-          <span className="text-xs font-medium" style={{ color: "#6D758F" }}>
+          <span className="text-xs font-medium text-content-secondary">
             {pr.author}
           </span>
         </div>
 
         <div className="flex items-center gap-2.5 text-xs font-semibold">
           <span
-            className="flex items-center gap-0.5"
-            style={{ color: "#16a34a" }}
+            className="flex items-center gap-0.5 text-theme-success"
             title={`${pr.additions} additions`}
           >
             <Plus size={11} strokeWidth={2.5} />
             {pr.additions}
           </span>
           <span
-            className="flex items-center gap-0.5"
-            style={{ color: "#dc2626" }}
+            className="flex items-center gap-0.5 text-theme-error"
             title={`${pr.deletions} deletions`}
           >
             <Minus size={11} strokeWidth={2.5} />
             {pr.deletions}
           </span>
-          <span style={{ color: "#6D758F" }} className="font-normal">
+          <span className="font-normal text-content-secondary">
             {pr.mergedAt}
           </span>
         </div>
@@ -194,19 +181,6 @@ const MOCK_PRS: PullRequest[] = [
   },
 ];
 
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 32 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.08,
-      duration: 0.55,
-      ease: "easeOut" as const,
-    },
-  }),
-};
-
 interface RecentPRsFeedProps {
   pullRequests?: PullRequest[];
 }
@@ -218,77 +192,46 @@ export default function RecentPRsFeed({ pullRequests }: RecentPRsFeedProps) {
     <section id="recent-prs" className="py-24">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section header */}
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true, margin: "-80px" }}
-        >
+        <div className="text-center mb-16 animate-fadeInUp">
           <p
-            className="text-xs font-medium uppercase tracking-[0.4em] mb-4"
-            style={{ color: "#149A9B" }}
+            className="text-xs font-medium uppercase tracking-[0.4em] mb-4 text-theme-primary"
           >
             Open Source · Community
           </p>
           <h2
-            className="text-4xl md:text-5xl font-black tracking-tight"
-            style={{ color: "#19213D" }}
+            className="text-4xl md:text-5xl font-black tracking-tight text-content-primary"
           >
             Recent Contributions
           </h2>
           <p
-            className="mt-4 text-lg font-light max-w-xl mx-auto"
-            style={{ color: "#6D758F" }}
+            className="mt-4 text-lg font-light max-w-xl mx-auto text-content-secondary"
           >
             The community ships fast. See the latest merged pull requests
             driving OFFER HUB forward.
           </p>
-        </motion.div>
+        </div>
 
         {/* PR grid — 1 col mobile, 2 col desktop */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {prs.map((pr, i) => (
-            <motion.div
-              key={pr.number}
-              custom={i}
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-60px" }}
-            >
+          {prs.map((pr) => (
+            <div key={pr.number}>
               <PRCardInline pr={pr} />
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* View all PRs CTA */}
-        <motion.div
-          className="flex justify-center mt-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.5, ease: "easeOut" }}
-          viewport={{ once: true, margin: "-60px" }}
-        >
+        <div className="flex justify-center mt-12">
           <a
             href="https://github.com/OFFER-HUB/offer-hub-monorepo/pulls?q=is%3Apr+is%3Amerged"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold text-white transition-all duration-[400ms] ease-out shadow-raised hover:shadow-raised-hover active:shadow-sunken-subtle"
-            style={{ background: "#149A9B" }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLAnchorElement).style.background =
-                "#0d7377")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLAnchorElement).style.background =
-                "#149A9B")
-            }
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold text-white transition-all duration-[400ms] ease-out shadow-neu-raised hover:shadow-neu-raised-hover active:shadow-neu-sunken-subtle bg-theme-primary hover:bg-theme-primary-hover"
           >
             View all PRs
             <ArrowRight size={15} />
           </a>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

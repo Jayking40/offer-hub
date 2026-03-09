@@ -1,138 +1,188 @@
 "use client";
 
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import DocsSearchBar from "@/components/docs/DocsSearchBar";
-import { Book, Code, Shield, LifeBuoy, Terminal, Zap } from "lucide-react";
 import Link from "next/link";
+import { BookOpen, Cpu, Shield, Coins, Server, BookMarked, Webhook } from "lucide-react";
+import { motion } from "framer-motion";
+import DocsSearchBar from "@/components/docs/DocsSearchBar";
 
 const docSections = [
-    {
-        icon: <Book className="text-[#149A9B]" />,
-        title: "Project Overview",
-        description: "Learn about the mission, architecture, and technology stack of Offer Hub.",
-        link: "/docs/architecture",
-        count: "3 articles"
-    },
-    {
-        icon: <Code className="text-[#149A9B]" />,
-        title: "Development",
-        description: "Guides on naming conventions, code style, and how to contribute.",
-        link: "/docs/contributing",
-        count: "4 articles"
-    },
-    {
-        icon: <Terminal className="text-[#149A9B]" />,
-        title: "API Reference",
-        description: "Detailed documentation for all backend API endpoints and responses.",
-        link: "/docs/api-responses",
-        count: "2 articles"
-    },
-    {
-        icon: <Shield className="text-[#149A9B]" />,
-        title: "Security & Auth",
-        description: "Comprehensive guide to the authentication and authorization system.",
-        link: "/docs/authentication",
-        count: "1 article"
-    },
-    {
-        icon: <Zap className="text-[#149A9B]" />,
-        title: "Database",
-        description: "Database schema design, migrations, and Supabase integration.",
-        link: "/docs/database",
-        count: "2 articles"
-    },
-    {
-        icon: <LifeBuoy className="text-[#149A9B]" />,
-        title: "Error Handling",
-        description: "Standard practices for error handling across the entire stack.",
-        link: "/docs/error-handling",
-        count: "1 article"
-    }
+  {
+    icon: BookOpen,
+    title: "Getting Started",
+    description: "Learn what OFFER-HUB is, how to install it, and make your first API call.",
+    link: "/docs/getting-started",
+    gradient:
+      "radial-gradient(ellipse 85% 80% at 8% 15%, rgba(20,154,155,0.15) 0%, rgba(20,154,155,0.05) 45%, transparent 75%), #F1F3F7",
+  },
+  {
+    icon: Cpu,
+    title: "Orchestrator Guide",
+    description: "Master the orchestrator architecture, balances, top-ups, and payment flows.",
+    link: "/docs/guide/orchestrator",
+    gradient:
+      "radial-gradient(ellipse 90% 80% at 90% 5%, rgba(27,200,202,0.16) 0%, rgba(27,200,202,0.05) 50%, transparent 75%), #F1F3F7",
+  },
+  {
+    icon: Shield,
+    title: "Escrow Flows",
+    description: "Smart contract escrow, deposits, withdrawals, and dispute resolution.",
+    link: "/docs/guide/escrow",
+    gradient:
+      "radial-gradient(ellipse 85% 90% at 10% 90%, rgba(13,115,119,0.14) 0%, rgba(13,115,119,0.04) 50%, transparent 75%), #F1F3F7",
+  },
+  {
+    icon: Coins,
+    title: "Multi-Currency",
+    description: "Accept any asset — fiat, stablecoins, or Stellar tokens. Automatic conversion at settlement.",
+    link: "/docs/guide/multi-currency",
+    gradient:
+      "radial-gradient(ellipse 90% 80% at 50% 50%, rgba(25,33,61,0.08) 0%, rgba(25,33,61,0.02) 55%, transparent 80%), #F1F3F7",
+  },
+  {
+    icon: Server,
+    title: "Self-Hosting",
+    description: "Deploy OFFER-HUB on your own infrastructure with Docker and configure it.",
+    link: "/docs/guide/self-hosting",
+    gradient:
+      "radial-gradient(ellipse 80% 85% at 50% 0%, rgba(34,224,226,0.14) 0%, rgba(34,224,226,0.04) 50%, transparent 75%), #F1F3F7",
+  },
+  {
+    icon: BookMarked,
+    title: "API Reference",
+    description: "Complete REST API documentation with authentication, endpoints, and examples.",
+    link: "/docs/api-reference/overview",
+    gradient:
+      "radial-gradient(ellipse 85% 80% at 92% 88%, rgba(10,98,101,0.15) 0%, rgba(10,98,101,0.04) 50%, transparent 75%), #F1F3F7",
+  },
+  {
+    icon: Webhook,
+    title: "Webhooks",
+    description: "Instant event notifications for every state change. Stay in sync with zero polling.",
+    link: "/docs/api-reference/webhooks",
+    gradient:
+      "radial-gradient(ellipse 85% 80% at 12% 80%, rgba(20,154,155,0.13) 0%, rgba(21,148,156,0.04) 50%, transparent 75%), #F1F3F7",
+  },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
 export default function DocsPage() {
-    return (
-        <div className="min-h-screen bg-white dark:bg-gray-950 flex flex-col">
-            <Navbar />
+  return (
+    <div className="min-h-screen flex flex-col bg-transparent pt-28">
+      <main className="flex-1">
+        {/* Hero Section */}
+        <div className="relative py-16 md:py-24">
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 60% 45% at 50% 50%, rgba(20,154,155,0.05) 0%, transparent 70%)",
+            }}
+          />
 
-            <main className="flex-1">
-                {/* Hub Header */}
-                <div className="bg-[#DEEFE7]/30 dark:bg-gray-900/50 py-20 border-b border-gray-100 dark:border-gray-800">
-                    <div className="container mx-auto px-4 max-w-5xl text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                            Offer Hub <span className="text-[#149A9B]">Documentation</span>
-                        </h1>
-                        <p className="text-lg text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">
-                            Everything you need to know about building, deploying, and contributing to the decentralized freelance marketplace.
-                        </p>
+          <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center">
+            <motion.p
+              className="text-xs font-medium uppercase tracking-[0.4em] mb-4"
+              style={{ color: "#149A9B" }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              Documentation Center
+            </motion.p>
 
-                        <DocsSearchBar />
-                    </div>
-                </div>
+            <motion.h1
+              className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4"
+              style={{ color: "#19213D" }}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.05 }}
+            >
+              Documentation
+            </motion.h1>
 
-                {/* Section Cards */}
-                <div className="container mx-auto px-4 py-16 max-w-6xl">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {docSections.map((section, idx) => (
-                            <Link
-                                key={idx}
-                                href={section.link}
-                                className="group p-8 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-raised transition-all duration-300 hover:-translate-y-1"
-                            >
-                                <div className="w-12 h-12 rounded-xl bg-[#DEEFE7]/50 dark:bg-gray-800 flex items-center justify-center mb-6 group-hover:bg-[#149A9B]/10 transition-colors">
-                                    {section.icon}
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-[#149A9B] transition-colors leading-tight">
-                                    {section.title}
-                                </h3>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6">
-                                    {section.description}
-                                </p>
-                                <div className="flex items-center justify-between text-xs font-bold text-gray-400 uppercase tracking-widest">
-                                    <span>{section.count}</span>
-                                    <span className="text-[#149A9B] opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                                        Explore <ChevronRight size={14} />
-                                    </span>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
+            <motion.p
+              className="text-base md:text-lg max-w-xl mx-auto mb-10 font-light"
+              style={{ color: "#6D758F" }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              Everything you need to orchestrate payments, integrate escrow, and build on OFFER-HUB.
+            </motion.p>
 
-                {/* Support Section */}
-                <div className="container mx-auto px-4 py-12 max-w-4xl text-center border-t border-gray-50 dark:border-gray-900">
-                    <p className="text-gray-500 dark:text-gray-500 italic mb-4">
-                        Cant find what youre looking for?
-                    </p>
-                    <div className="flex justify-center gap-6">
-                        <Link href="/help" className="text-[#149A9B] font-semibold hover:underline">Help Center</Link>
-                        <span className="text-gray-300">•</span>
-                        <Link href="https://github.com/OFFER-HUB/offer-hub-monorepo/issues" className="text-[#149A9B] font-semibold hover:underline">GitHub Issues</Link>
-                    </div>
-                </div>
-            </main>
-
-            <Footer />
+            {/* Search */}
+            <motion.div
+              className="relative z-20 max-w-xl mx-auto"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+            >
+              <DocsSearchBar />
+            </motion.div>
+          </div>
         </div>
-    );
-}
 
-function ChevronRight({ size = 16, className = "" }) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width={size}
-            height={size}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={className}
-        >
-            <path d="m9 18 6-6-6-6" />
-        </svg>
-    );
+        {/* Section Cards */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 pb-24">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+          >
+            {docSections.map((section) => {
+              const Icon = section.icon;
+              return (
+                <motion.div key={section.title} variants={cardVariants}>
+                  <Link
+                    href={section.link}
+                    className="flex p-8 rounded-2xl shadow-raised flex-col gap-4 hover:shadow-[0_24px_32px_-8px_rgba(20,154,155,0.1)] transition-shadow duration-300"
+                    style={{ background: section.gradient }}
+                  >
+                    <div
+                      className="w-10 h-10 rounded-xl shadow-raised-sm flex items-center justify-center shrink-0"
+                      style={{ background: "#F1F3F7" }}
+                    >
+                      <Icon size={18} style={{ color: "#149A9B" }} />
+                    </div>
+                    <h3
+                      className="font-bold text-lg"
+                      style={{ color: "#19213D" }}
+                    >
+                      {section.title}
+                    </h3>
+                    <p
+                      className="text-sm font-light leading-relaxed"
+                      style={{ color: "#6D758F" }}
+                    >
+                      {section.description}
+                    </p>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </main>
+    </div>
+  );
 }

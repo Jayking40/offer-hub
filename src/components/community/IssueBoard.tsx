@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import SectionHeading from "@/components/community/SectionHeading";
 import IssueCard, { type Difficulty, type IssueCardProps } from "@/components/community/IssueCard";
@@ -111,14 +110,11 @@ export default function IssueBoard({ issues = MOCK_ISSUES }: IssueBoardProps) {
               <button
                 key={f.value}
                 onClick={() => setActiveFilter(f.value)}
-                className="rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200"
-                style={{
-                  background: isActive ? "#149A9B" : "#F1F3F7",
-                  color: isActive ? "#ffffff" : "#6D758F",
-                  boxShadow: isActive
-                    ? "inset 2px 2px 4px rgba(0,0,0,0.15)"
-                    : "3px 3px 6px #d1d5db, -3px -3px 6px #ffffff",
-                }}
+                className={`rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ${
+                  isActive
+                    ? "bg-theme-primary text-white shadow-neu-sunken-subtle"
+                    : "bg-bg-base text-content-secondary shadow-neu-raised-sm"
+                }`}
               >
                 {f.label}
               </button>
@@ -128,20 +124,15 @@ export default function IssueBoard({ issues = MOCK_ISSUES }: IssueBoardProps) {
 
         {/* Issue grid */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          {filtered.map((issue, i) => (
-            <motion.div
-              key={issue.number}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06, duration: 0.4, ease: "easeOut" }}
-            >
+          {filtered.map((issue) => (
+            <div key={issue.number}>
               <IssueCard {...issue} />
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {filtered.length === 0 && (
-          <p className="text-center py-16 text-sm" style={{ color: "#6D758F" }}>
+          <p className="text-center py-16 text-sm text-content-secondary">
             No issues found for this filter.
           </p>
         )}
@@ -152,12 +143,7 @@ export default function IssueBoard({ issues = MOCK_ISSUES }: IssueBoardProps) {
             href="https://github.com/OFFER-HUB/offer-hub-monorepo/issues"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-semibold transition-all duration-200 hover:opacity-90"
-            style={{
-              background: "#149A9B",
-              color: "#ffffff",
-              boxShadow: "6px 6px 12px #d1d5db, -6px -6px 12px #ffffff",
-            }}
+            className="inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-semibold transition-all duration-200 hover:opacity-90 bg-theme-primary text-white shadow-neu-raised"
           >
             Browse all issues
             <ArrowUpRight size={16} />

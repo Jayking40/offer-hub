@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getAllDocSlugs, getDocBySlug } from "@/lib/mdx";
 import { MDX_COMPONENTS } from "@/components/docs/mdx-components";
-import { DocPageActions } from "@/components/docs/DocPageActions";
 import { EditOnGitHub } from "@/components/docs/EditOnGitHub";
+
+import remarkGfm from "remark-gfm";
 
 interface PageProps {
   params: Promise<{ slug: string[] }>;
@@ -59,8 +60,25 @@ export default async function DocPage({ params }: PageProps) {
 
       {/* MDX content */}
       <div className="max-w-none" id="doc-page-export-content">
-        <MDXRemote source={doc.content} components={MDX_COMPONENTS} />
+        <MDXRemote
+          source={doc.content}
+          components={MDX_COMPONENTS}
+          options={{
+            mdxOptions: {
+              remarkPlugins: [remarkGfm],
+            }
+          }}
+        />
       </div>
+
+      {/* Hidden metadata for layout actions */}
+      <div
+        id="doc-metadata-for-actions"
+        style={{ display: "none" }}
+        data-slug={doc.slug}
+        data-title={doc.frontmatter.title}
+        data-markdown={doc.content}
+      />
 
       {/* Edit on GitHub link */}
       <div className="mt-8 pt-6 border-t" style={{ borderColor: "#d1d5db" }}>

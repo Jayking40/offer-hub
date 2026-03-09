@@ -1,102 +1,503 @@
 ---
-title: API Overview
-description: Introduction to the OFFER-HUB REST API — authentication, response format, and error handling.
-order: 2
+title: API Reference
+description: Complete REST API reference for OFFER-HUB — endpoints, parameters, and response schemas.
+order: 1
 section: API Reference
 ---
 
-The OFFER-HUB backend exposes a RESTful JSON API at `http://localhost:4000`. All endpoints are prefixed with `/api/v1`.
+The OFFER-HUB Orchestrator exposes a RESTful JSON API. All endpoints are prefixed with `/api/v1`.
+
+## Base URL
+
+```
+https://{your-orchestrator-domain}/api/v1
+```
+
+For local development:
+
+```
+http://localhost:4000/api/v1
+```
 
 ## Authentication
 
-Most endpoints require a Bearer token in the `Authorization` header:
+All requests require authentication via a Bearer token (API Key).
+
+### Request Header
 
 ```http
-GET /api/v1/balances
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-Obtain a token by logging in:
+### Getting an API Key
+
+Create an API key using your master key:
 
 ```bash
-curl -X POST http://localhost:4000/api/v1/auth/login \
+curl -X POST http://localhost:4000/api/v1/auth/api-keys \
+  -H "Authorization: Bearer YOUR_OFFERHUB_MASTER_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"email":"user@example.com","password":"password"}'
+  -d '{"name": "My Marketplace", "scopes": ["read", "write"]}'
 ```
 
-## Response Format
-
-All responses follow the `ApiResponse<T>` envelope:
+Response:
 
 ```json
 {
-  "code": 200,
-  "type": "success",
-  "ok": true,
-  "message": "Operation completed successfully",
-  "data": {}
+  "data": {
+    "id": "key_abc123",
+    "key": "ohk_live_xxxxxxxxxxxx",
+    "name": "My Marketplace",
+    "scopes": ["read", "write"]
+  }
+}
+```
+
+<Callout type="danger">
+  Save the `key` value immediately - it's only shown once!
+</Callout>
+
+### API Key Scopes
+
+| Scope | Permissions |
+|-------|-------------|
+| `read` | All GET endpoints |
+| `write` | POST to create/modify resources |
+| `support` | Resolve disputes, add comments |
+
+## Common Headers
+
+### Request Headers
+
+| Header | Required | Description |
+|--------|----------|-------------|
+| `Authorization` | Yes | `Bearer {api_key}` |
+| `Content-Type` | Yes (POST/PUT) | `application/json` |
+| `Idempotency-Key` | Conditional | UUID for state-changing POSTs |
+| `X-Request-ID` | No | UUID for correlation/debugging |
+
+### Response Headers
+
+| Header | Description |
+|--------|-------------|
+| `X-Request-ID` | Echo of request ID or auto-generated |
+| `X-Idempotency-Key` | Echo of key if applied |
+| `X-RateLimit-Limit` | Request limit |
+| `X-RateLimit-Remaining` | Remaining requests |
+| `X-RateLimit-Reset` | Reset timestamp |
+
+## Response Format
+
+### Success Response
+
+```json
+{
+  "id": "ord_abc123",
+  "status": "ORDER_CREATED",
+  "amount": "100.00",
+  "currency": "USD",
+  "created_at": "2026-01-12T10:00:00.000Z",
+  "updated_at": "2026-01-12T10:00:00.000Z"
+}
+```
+
+### List Response
+
+```json
+{
+  "data": ["..."],
+  "pagination": {
+    "has_more": true,
+    "next_cursor": "ord_abc123"
+  }
+}
+```
+
+### Error Response
+
+```json
+{
+  "error": {
+    "code": "INSUFFICIENT_FUNDS",
+    "message": "Available balance is less than requested amount",
+    "details": {
+      "available": "50.00",
+      "requested": "100.00"
+    }
+  }
+}
+```
+
+## Error Codes
+
+| Code | HTTP | When to Use |
+|------|------|-------------|
+| `VALIDATION_ERROR` | 400 | Invalid fields in request |
+| `UNAUTHORIZED` | 401 | Missing or invalid API key |
+| `INSUFFICIENT_SCOPE` | 403 | API key lacks required scope |
+| `USER_NOT_FOUND` | 404 | User does not exist |
+| `ORDER_NOT_FOUND` | 404 | Order does not exist |
+| `INVALID_STATE` | 409 | Invalid state transition |
+| `IDEMPOTENCY_KEY_REUSED` | 409 | Same key with different body |
+| `INSUFFICIENT_FUNDS` | 422 | Balance too low |
+| `RATE_LIMITED` | 429 | Too many requests |
+| `PROVIDER_TIMEOUT` | 504 | External provider timeout |
+
+---
+
+## Escrows
+
+Escrow contracts hold funds securely between buyers and sellers until project completion.
+
+### Initialize an Escrow
+
+<Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/escrow`
+
+Creates a new escrow contract between buyer and seller. Funds are held until release.
+
+**Request Body**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `amount` | string | Yes | Amount to escrow |
+| `currency` | string | Yes | Currency code (USD, XLM, USDC) |
+
+```json
+{
+  "amount": "2500.00",
+  "currency": "USD"
+}
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "escrow_id": "esc_01JKL",
+    "order_id": "ord_abc123",
+    "buyer_id": "usr_01ABC",
+    "seller_id": "usr_02ABC",
+    "amount": "2500.00",
+    "currency": "USD",
+    "status": "PENDING",
+    "created_at": "2026-02-01T14:00:00.000Z"
+  }
+}
+```
+
+### Fund Escrow
+
+<Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/escrow/fund`
+
+Funds an existing escrow contract.
+
+<Callout type="warning">
+  Returns `422 INSUFFICIENT_FUNDS` if the buyer has insufficient balance.
+</Callout>
+
+### Release Escrow
+
+<Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/release`
+
+Releases held funds from an escrow to the seller upon project completion.
+
+**Response**
+
+```json
+{
+  "data": {
+    "escrow_id": "esc_01JKL",
+    "status": "RELEASED",
+    "released_amount": "2500.00",
+    "released_at": "2026-02-10T16:00:00.000Z"
+  }
+}
+```
+
+### Refund Escrow
+
+<Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/refund`
+
+Refunds escrowed funds back to the buyer.
+
+### Open Dispute
+
+<Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/dispute`
+
+Opens a dispute on an escrow for resolution.
+
+---
+
+## Transactions
+
+Retrieve user transaction and balance history.
+
+### Get User Balance
+
+<Badge variant="success">GET</Badge> `/api/v1/users/{id}/balance`
+
+Returns the user's current balance across all currencies.
+
+<CommandLine>curl -X GET http://localhost:4000/api/v1/users/usr_abc/balance -H "Authorization: Bearer TOKEN"</CommandLine>
+
+**Response**
+
+```json
+{
+  "data": {
+    "user_id": "usr_abc123",
+    "balances": [
+      { "currency": "USD", "available": "1250.00", "held": "200.00" },
+      { "currency": "XLM", "available": "5000.00", "held": "0.00" }
+    ]
+  }
 }
 ```
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `code` | number | HTTP status code |
-| `type` | string | `success` or `error` |
-| `ok` | boolean | `true` on success |
-| `message` | string | Human-readable message |
-| `data` | T or null | Response payload |
-| `errors` | string array or null | Validation errors if any |
+| `currency` | string | Currency code |
+| `available` | string | Spendable balance |
+| `held` | string | Balance locked in escrows |
 
-## Error Handling
+### Get Deposit Address
 
-Errors also use the same envelope format:
+<Badge variant="success">GET</Badge> `/api/v1/users/{id}/wallet/deposit`
+
+Returns a deposit address for the user to fund their account.
+
+---
+
+## Webhooks
+
+Receive real-time event notifications from OFFER-HUB via HTTP webhooks.
+
+See the [Webhooks documentation](/docs/api-reference/webhooks) for complete details on:
+- Payload structures
+- Signature verification
+- Retry logic
+
+**Available Events**
+
+| Event | Trigger |
+|-------|---------|
+| `escrow.created` | New escrow contract created |
+| `escrow.funded` | Escrow has received funds |
+| `escrow.released` | Seller paid; escrow completed |
+| `escrow.disputed` | Dispute opened on an escrow |
+| `escrow.refunded` | Escrow refunded to buyer |
+
+---
+
+## Assets
+
+### Create Withdrawal
+
+<Badge variant="primary">POST</Badge> `/api/v1/withdrawals`
+
+Initiate a withdrawal from user balance.
+
+**Request Body**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `user_id` | string | Yes | User requesting withdrawal |
+| `amount` | string | Yes | Amount to withdraw |
+| `currency` | string | Yes | Currency code |
+| `destination` | object | Yes | Withdrawal destination |
 
 ```json
 {
-  "code": 422,
-  "type": "error",
-  "ok": false,
-  "message": "Validation failed",
-  "data": null,
-  "errors": ["Amount must be positive", "Currency is required"]
+  "user_id": "usr_abc123",
+  "amount": "100.00",
+  "currency": "USD",
+  "destination": {
+    "type": "stellar",
+    "address": "GBCG42WTVWPO4Q6N..."
+  }
 }
 ```
 
-### Common Error Codes
+### Get Withdrawal
 
-| Code | Meaning |
-|------|---------|
-| `400` | Bad Request — malformed input |
-| `401` | Unauthorized — missing or invalid token |
-| `403` | Forbidden — insufficient permissions |
-| `404` | Not Found |
-| `422` | Validation Error |
-| `500` | Internal Server Error |
+<Badge variant="success">GET</Badge> `/api/v1/withdrawals/{id}`
 
-<Callout type="note">
-  All error messages are safe to display to end users. Internal details are logged server-side only.
-</Callout>
+Returns withdrawal status and details.
+
+---
+
+## Pagination
+
+List endpoints support cursor-based pagination:
+
+### Request
+
+```
+GET /orders?limit=20&cursor=ord_xyz789
+```
+
+| Param | Default | Max | Description |
+|-------|---------|-----|-------------|
+| `limit` | 20 | 100 | Items per page |
+| `cursor` | - | - | ID of last item from previous page |
+
+### Response
+
+```json
+{
+  "data": ["..."],
+  "pagination": {
+    "has_more": true,
+    "next_cursor": "ord_abc123"
+  }
+}
+```
+
+## Filters
+
+List endpoints accept query parameter filters:
+
+```
+GET /orders?status=IN_PROGRESS&buyer_id=usr_abc&created_after=2026-01-01
+```
+
+| Filter | Type | Example |
+|--------|------|---------|
+| `status` | string | `IN_PROGRESS` |
+| `buyer_id` | string | `usr_abc123` |
+| `seller_id` | string | `usr_xyz789` |
+| `created_after` | ISO date | `2026-01-01T00:00:00Z` |
+| `created_before` | ISO date | `2026-01-31T23:59:59Z` |
+
+## Idempotency
+
+All state-changing POSTs accept `Idempotency-Key` to prevent duplicate operations:
+
+```http
+POST /orders
+Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000
+Content-Type: application/json
+
+{ "order_data": "..." }
+```
+
+### Behavior
+
+1. **First request**: Processed normally
+2. **Repeated request** (same key): Returns original response
+3. **Different body + same key**: Returns `409 IDEMPOTENCY_KEY_REUSED`
+
+### Idempotency Windows
+
+| Resource | Window |
+|----------|--------|
+| Top-ups | 24 hours |
+| Withdrawals | 24 hours |
+| Orders | 7 days |
+| Escrow ops | 7 days |
+| Disputes | Forever |
 
 ## Rate Limiting
 
-The API enforces rate limits per IP address. Exceeding the limit returns `429 Too Many Requests`.
+| Endpoint | Limit |
+|----------|-------|
+| General | 100 req/min per API key |
+| POST /topups | 10 req/min per user |
+| POST /withdrawals | 5 req/min per user |
+| GET /events | 1 SSE connection per user |
 
-<Callout type="warning">
-  Default limits: **100 requests / 15 minutes** for public endpoints, **300 / 15 min** for authenticated endpoints.
-</Callout>
+### Response When Exceeded
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+
+{
+  "error": {
+    "code": "RATE_LIMITED",
+    "message": "Too many requests",
+    "details": {
+      "retry_after": 60
+    }
+  }
+}
+```
 
 ## Available Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `POST /auth/register` | Register a new user |
-| `POST /auth/login` | Login and receive a JWT |
-| `GET /balances` | Get user balances |
-| `GET /balances/transactions` | Get paginated transaction history |
-| `POST /wallets/connect` | Connect a Stellar wallet |
-| `GET /projects` | List projects |
-| `POST /projects` | Create a project |
-| `POST /escrow/init` | Initialise an escrow |
-| `POST /escrow/release` | Release escrowed funds |
+### Auth & Config
 
-See [Webhooks](/docs/api-reference/webhooks) for event delivery configuration.
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/auth/api-keys` | <Badge variant="primary">POST</Badge> | Create API key |
+| `/auth/api-keys` | <Badge variant="success">GET</Badge> | List API keys |
+| `/health` | <Badge variant="success">GET</Badge> | Health check |
+
+### Users
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/users` | <Badge variant="primary">POST</Badge> | Create user |
+| `/users` | <Badge variant="success">GET</Badge> | List users |
+| `/users/{id}` | <Badge variant="success">GET</Badge> | Get user |
+| `/users/{id}/balance` | <Badge variant="success">GET</Badge> | Get balance |
+| `/users/{id}/wallet/deposit` | <Badge variant="success">GET</Badge> | Get deposit address |
+
+### Orders
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/orders` | <Badge variant="primary">POST</Badge> | Create order |
+| `/orders` | <Badge variant="success">GET</Badge> | List orders |
+| `/orders/{id}` | <Badge variant="success">GET</Badge> | Get order |
+| `/orders/{id}/reserve` | <Badge variant="primary">POST</Badge> | Reserve funds |
+| `/orders/{id}/cancel` | <Badge variant="primary">POST</Badge> | Cancel order |
+
+### Escrow
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/orders/{id}/escrow` | <Badge variant="primary">POST</Badge> | Create escrow |
+| `/orders/{id}/escrow/fund` | <Badge variant="primary">POST</Badge> | Fund escrow |
+
+### Resolution
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/orders/{id}/resolution/release` | <Badge variant="primary">POST</Badge> | Release to seller |
+| `/orders/{id}/resolution/refund` | <Badge variant="primary">POST</Badge> | Refund to buyer |
+| `/orders/{id}/resolution/dispute` | <Badge variant="primary">POST</Badge> | Open dispute |
+| `/disputes/{id}/resolve` | <Badge variant="primary">POST</Badge> | Resolve dispute |
+
+### Withdrawals
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/withdrawals` | <Badge variant="primary">POST</Badge> | Create withdrawal |
+| `/withdrawals/{id}` | <Badge variant="success">GET</Badge> | Get withdrawal |
+| `/withdrawals/{id}/commit` | <Badge variant="primary">POST</Badge> | Commit withdrawal (AirTM) |
+
+### Events
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/events` | <Badge variant="success">GET</Badge> | SSE event stream |
+
+## Versioning
+
+The API uses path versioning:
+
+```
+/api/v1/orders
+/api/v2/orders  (future)
+```
+
+- `v1` is the current stable version
+- Deprecated versions will have 6 months notice
+
+## Next Steps
+
+- [Webhooks](/docs/api-reference/webhooks) - Receive event notifications
+- [Quick Start](/docs/guide/quick-start) - Your first API call
+- [SDK Guide](/docs/sdk/quick-start) - Use the TypeScript SDK

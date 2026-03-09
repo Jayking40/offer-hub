@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
 
 /**
@@ -17,45 +18,32 @@ export default function HeroSection() {
 
     let frame: number;
     let t = 0;
+    let paused = false;
 
     const animate = () => {
-      // Slow, organic speed — feels like molten liquid
+      if (paused) return;
       t += 0.022;
 
-      // Each blob orbits independently with different frequencies & amplitudes
       const b1x = 50 + 28 * Math.sin(t * 0.70);
       const b1y = 50 + 22 * Math.cos(t * 0.50);
-
       const b2x = 50 + 22 * Math.sin(t * 0.40 + 2.0);
       const b2y = 50 + 28 * Math.cos(t * 0.60 + 1.2);
-
       const b3x = 50 + 32 * Math.sin(t * 0.85 + 4.2);
       const b3y = 50 + 18 * Math.cos(t * 0.75 + 3.0);
-
       const b4x = 50 + 18 * Math.sin(t * 1.10 + 1.0);
       const b4y = 50 + 30 * Math.cos(t * 0.95 + 5.1);
-
       const b5x = 50 + 38 * Math.sin(t * 0.55 + 5.5);
       const b5y = 50 + 24 * Math.cos(t * 0.42 + 4.0);
-
       const b6x = 50 + 14 * Math.sin(t * 1.30 + 3.0);
       const b6y = 50 + 14 * Math.cos(t * 1.15 + 2.0);
 
-      // Teal variation blobs + subtle mist blobs.
-      // The mist blobs (page bg color, semi-transparent) recreate the soft nebula
-      // look from before — but now the solid backgroundColor underneath means
-      // letters never disappear, the mist only brightens areas slightly.
       el.style.backgroundImage = [
-        // Teal liquid blobs
         `radial-gradient(ellipse 48% 55% at ${b1x}% ${b1y}%, #1bc8ca 0%, #149A9B 45%, rgba(20,154,155,0) 82%)`,
         `radial-gradient(ellipse 38% 46% at ${b2x}% ${b2y}%, #22e0e2 0%, #1bc8ca 40%, rgba(27,200,202,0) 80%)`,
         `radial-gradient(ellipse 32% 42% at ${b3x}% ${b3y}%, #15949C 0%, rgba(21,148,156,0) 78%)`,
         `radial-gradient(ellipse 28% 38% at ${b4x}% ${b4y}%, #0d7377 0%, rgba(13,115,119,0) 78%)`,
         `radial-gradient(ellipse 44% 52% at ${b5x}% ${b5y}%, #149A9B 0%, rgba(20,154,155,0) 82%)`,
         `radial-gradient(ellipse 20% 26% at ${b6x}% ${b6y}%, #22e0e2 0%, rgba(34,224,226,0) 72%)`,
-        // Nebula/mist blobs — page bg color at higher opacity partially "covers"
-        // the letters, like fog obscuring parts of the text. The solid
-        // backgroundColor beneath ensures letters never fully vanish.
         `radial-gradient(ellipse 62% 72% at ${b3x}% ${b2y}%, rgba(241,243,247,0.90) 0%, rgba(241,243,247,0.50) 40%, rgba(241,243,247,0) 78%)`,
         `radial-gradient(ellipse 52% 62% at ${b5x}% ${b4y}%, rgba(241,243,247,0.80) 0%, rgba(241,243,247,0.38) 38%, rgba(241,243,247,0) 72%)`,
         `radial-gradient(ellipse 42% 50% at ${b1x}% ${b6y}%, rgba(241,243,247,0.65) 0%, rgba(241,243,247,0.20) 45%, rgba(241,243,247,0) 70%)`,
@@ -64,14 +52,29 @@ export default function HeroSection() {
       frame = requestAnimationFrame(animate);
     };
 
+    // Pause animation when tab is hidden to save CPU
+    const onVisibility = () => {
+      if (document.hidden) {
+        paused = true;
+        cancelAnimationFrame(frame);
+      } else {
+        paused = false;
+        frame = requestAnimationFrame(animate);
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibility);
     frame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frame);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   return (
     <section
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden select-none"
-      style={{ background: "#F1F3F7" }}
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden select-none bg-transparent"
     >
       {/* ── Subtle teal glow centered ── */}
       <div
@@ -82,18 +85,8 @@ export default function HeroSection() {
         }}
       />
 
-      {/* ── Dot-grid texture ── */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.045]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, rgba(0,35,51,0.7) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
-
-      {/* ── Hero content — pt-16 clears the fixed navbar ── */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 w-full max-w-[96vw] pt-16">
+      {/* ── Hero content — pt-28 clears the fixed pill navbar ── */}
+      <div className="relative z-10 flex flex-col items-center text-center px-4 w-full pt-28">
         {/* Eyebrow — key value props from product docs */}
         <p
           className="animate-fadeIn text-xs font-medium uppercase tracking-[0.4em] mb-10"
@@ -111,9 +104,9 @@ export default function HeroSection() {
          */}
         <h1
           ref={headingRef}
-          className="font-black leading-none tracking-tighter whitespace-nowrap"
+          className="font-black leading-[1.1] tracking-tight whitespace-nowrap px-8 py-4"
           style={{
-            fontSize: "clamp(4rem, 14vw, 13rem)",
+            fontSize: "clamp(3.5rem, 13vw, 12rem)",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
             color: "transparent",
@@ -129,10 +122,10 @@ export default function HeroSection() {
         {/* Tagline — product-accurate description */}
         <p
           className="animate-fadeInUp mt-10 text-lg md:text-xl font-light max-w-xl leading-relaxed"
-          style={{ color: "#6D758F", animationDelay: "300ms" }}
+          style={{ color: "var(--color-text-secondary)", animationDelay: "300ms" }}
         >
           A payments orchestrator for modern marketplaces.{" "}
-          <span className="font-semibold" style={{ color: "#19213D" }}>
+          <span className="font-semibold" style={{ color: "var(--color-text-primary)" }}>
             Zero custodial risk. Complete developer control.
           </span>
         </p>
@@ -143,32 +136,24 @@ export default function HeroSection() {
           style={{ animationDelay: "500ms" }}
         >
           {/* Primary — neumorphic raised, teal */}
-          <button
-            className="group flex items-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-semibold text-white transition-all duration-[400ms] ease-out shadow-raised hover:shadow-raised-hover active:shadow-sunken-subtle"
-            style={{ background: "#149A9B" }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLButtonElement).style.background =
-                "#0d7377")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLButtonElement).style.background =
-                "#149A9B")
-            }
+          <a
+            href="#waitlist-form"
+            className="group flex items-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-semibold btn-neumorphic-primary"
           >
             Get Started
             <ArrowRight
               size={15}
               className="group-hover:translate-x-0.5 transition-transform duration-[200ms]"
             />
-          </button>
+          </a>
 
           {/* Secondary — neumorphic raised, same base color as page */}
-          <button
-            className="px-7 py-3.5 rounded-xl text-sm font-medium transition-all duration-[400ms] ease-out shadow-raised hover:shadow-raised-hover active:shadow-sunken-subtle"
-            style={{ color: "#19213D", background: "#F1F3F7" }}
+          <Link
+            href="/docs"
+            className="px-7 py-3.5 rounded-xl text-sm font-medium btn-neumorphic-secondary"
           >
             View Docs
-          </button>
+          </Link>
         </div>
       </div>
 
