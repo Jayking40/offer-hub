@@ -88,7 +88,7 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-bg-base">
       <Navbar />
 
       <div className="pt-40 pb-10">
@@ -188,17 +188,17 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
             onClick={() => setIsDrawerOpen(false)}
           />
           <aside
-            className="relative h-full w-80 max-w-[85vw] p-8 bg-[#F1F3F7]"
+            className="relative h-full w-80 max-w-[85vw] p-8 bg-bg-base shadow-neu-raised"
             style={{ borderTopRightRadius: "30px", borderBottomRightRadius: "30px" }}
           >
-            <div className="mb-8 flex items-center justify-between pb-4 border-b border-[#D1D5DB]/30">
+            <div className="mb-8 flex items-center justify-between pb-4 border-b border-theme-border/40">
               <p className="text-sm font-bold uppercase tracking-widest text-[#149A9B]">
                 Navigation
               </p>
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(false)}
-                className="inline-flex items-center justify-center p-2 rounded-lg text-[#6D758F] hover:bg-[#149A9B]/5 hover:text-[#19213D] transition-all"
+                className="inline-flex items-center justify-center p-2 rounded-lg text-content-secondary hover:bg-bg-elevated hover:text-content-primary transition-all"
                 aria-label="Close docs navigation"
               >
                 <X size={20} />
