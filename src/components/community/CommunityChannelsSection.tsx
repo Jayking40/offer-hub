@@ -56,16 +56,16 @@ const CommunityChannelsSection = () => {
                 href={channel.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-full flex-col rounded-2xl bg-background p-6 shadow-raised transition-transform duration-300 hover:-translate-y-1"
+                className="flex h-full flex-col rounded-2xl bg-bg-elevated p-6 shadow-neu-raised transition-all duration-300 hover:-translate-y-1 hover:shadow-neu-raised-hover"
               >
-                <Icon size={18} className="text-primary" />
-                <h3 className="mt-4 text-xl font-bold text-text-primary">
+                <Icon size={18} className="text-theme-primary" />
+                <h3 className="mt-4 text-xl font-bold text-content-primary">
                   {channel.name}
                 </h3>
-                <p className="mt-2 text-sm font-light leading-relaxed text-text-secondary">
+                <p className="mt-2 text-sm font-light leading-relaxed text-content-secondary">
                   {channel.description}
                 </p>
-                <span className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-semibold text-text-primary">
+                <span className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-semibold text-content-primary">
                   Join channel <ArrowUpRight size={16} />
                 </span>
               </a>
