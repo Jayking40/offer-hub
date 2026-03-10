@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Settings, Code, Box, Layers,
-  Shield, Workflow, FileText, Zap, Compass, Rocket, Home
+  Shield, Workflow, FileText, Zap, Compass, Rocket
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { SidebarSection } from "@/lib/mdx";
@@ -61,14 +61,8 @@ export function DocsSidebar({ nav, className }: DocsSidebarProps) {
           </div>
           <ul role="list" className="space-y-1.5">
             <SidebarItem
-              href="/docs"
-              icon={<Home size={16} />}
-              label="Home"
-              isActive={pathname === "/docs"}
-            />
-            <SidebarItem
               href="/docs/getting-started"
-              icon={<Rocket size={16} />}
+              icon={<Rocket size={16} className={pathname === "/docs/getting-started" ? "text-theme-primary" : "text-content-secondary"} />}
               label="Welcome"
               isActive={pathname === "/docs/getting-started"}
             />

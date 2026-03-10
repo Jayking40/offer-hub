@@ -4,6 +4,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getAllDocSlugs, getDocBySlug } from "@/lib/mdx";
 import { MDX_COMPONENTS } from "@/components/docs/mdx-components";
 import { EditOnGitHub } from "@/components/docs/EditOnGitHub";
+import { DocPageActions } from "@/components/docs/DocPageActions";
 
 import remarkGfm from "remark-gfm";
 
