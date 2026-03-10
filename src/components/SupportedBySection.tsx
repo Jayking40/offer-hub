@@ -6,15 +6,22 @@ const partners = [
     name: "Stellar",
     logo: "/stellar.png",
     url: "https://stellar.org",
-    width: 60,
-    height: 15,
+    width: 50,
+    height: 12,
   },
   {
     name: "Trustless Work",
     logo: "/trustless-works.webp",
     url: "https://www.trustlesswork.com/",
-    width: 70,
-    height: 15,
+    width: 130,
+    height: 28,
+  },
+  {
+    name: "Drips",
+    logo: "/drips.svg",
+    url: "https://www.drips.network/",
+    width: 130,
+    height: 28,
   },
 ];
 

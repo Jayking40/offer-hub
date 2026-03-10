@@ -70,7 +70,7 @@ export default function PRCard({
         <img
           src={authorAvatar}
           alt={`${author} avatar`}
-          className="h-7 w-7 rounded-full object-cover shadow-neu-raised-sm"
+          className="h-8 w-8 rounded-full object-cover shadow-neu-raised-sm"
           loading="lazy"
         />
         <p className="text-xs text-content-secondary">

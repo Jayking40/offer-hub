@@ -27,7 +27,7 @@ const ContributorCard = memo(function ContributorCard({ person }: { person: Cont
             alt={person.name}
             loading="lazy"
             decoding="async"
-            className="w-14 h-14 rounded-full object-cover shadow-neu-sunken-subtle"
+            className="w-16 h-16 rounded-full object-cover shadow-neu-sunken-subtle"
           />
         ) : (
           <div className="w-14 h-14 rounded-full bg-bg-elevated flex items-center justify-center shadow-neu-sunken-subtle">
