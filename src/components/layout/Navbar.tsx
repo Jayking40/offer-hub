@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Send } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 const navLinks = [
   { href: "/#features", label: "Features" },
@@ -49,6 +50,8 @@ export function Navbar() {
     };
   }, [isMenuOpen]);
 
+  const { resolvedTheme } = useTheme();
+
   return (
     <>
       {/*
@@ -67,16 +70,16 @@ export function Navbar() {
         )}
       >
         <nav className="px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
+          <div className="flex items-center justify-between h-16">
 
             {/* ── Logo ── */}
             <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
               <Image
-                src="/OFFER-HUB-logo.png"
+                src={resolvedTheme === "dark" ? "/OFFER-HUB-logo-to-darkmode.png" : "/OFFER-HUB-logo.png"}
                 alt="OFFER-HUB"
-                width={140}
-                height={36}
-                className="h-8 w-auto object-contain"
+                width={180}
+                height={48}
+                className="h-10 w-auto object-contain"
                 priority
               />
             </Link>

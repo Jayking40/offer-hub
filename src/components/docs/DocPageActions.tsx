@@ -73,7 +73,7 @@ export function DocPageActions({ slug, title, description, markdownContent }: Do
       exportContainer.innerHTML = `
         <header style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:18px;border-bottom:1px solid #e5e7eb;margin-bottom:18px;">
           <div style="display:flex;align-items:center;gap:10px;">
-            <img src="${logo}" alt="OFFER-HUB" style="height:36px;width:auto;object-fit:contain;" />
+            <img src="${logo}" alt="OFFER-HUB" style="height:48px;width:auto;object-fit:contain;" />
           </div>
           <div style="text-align:right;">
             <div style="font-size:12px;letter-spacing:0.08em;color:#149A9B;font-weight:700;text-transform:uppercase;">Documentation Export</div>

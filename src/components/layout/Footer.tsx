@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Twitter, Send, Github, Disc3 } from "lucide-react";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 const navColumns = [
   {
@@ -41,6 +42,7 @@ const socialLinks = [
 export function Footer() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -67,17 +69,17 @@ export function Footer() {
     <footer className="bg-transparent pt-4 pb-0 relative">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         {/* ── Card ── */}
-        <div className="rounded-3xl px-10 py-10 bg-bg-elevated shadow-neu-raised">
+        <div className="rounded-3xl px-10 py-12 bg-bg-elevated shadow-neu-raised">
           <div className="flex flex-col md:flex-row gap-10 md:gap-16">
             {/* Left — logo + desc + socials */}
-            <div className="flex flex-col gap-5 md:w-64 flex-shrink-0">
+            <div className="flex flex-col gap-6 md:w-72 flex-shrink-0">
               <Link href="/" className="flex items-center gap-2.5">
                 <Image
-                  src="/OFFER-HUB-logo.png"
+                  src={resolvedTheme === "dark" ? "/OFFER-HUB-logo-to-darkmode.png" : "/OFFER-HUB-logo.png"}
                   alt="OFFER-HUB"
-                  width={120}
-                  height={32}
-                  className="h-7 w-auto object-contain"
+                  width={160}
+                  height={42}
+                  className="h-9 w-auto object-contain"
                 />
               </Link>
               <p className="text-sm leading-relaxed text-content-secondary">
