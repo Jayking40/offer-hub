@@ -14,7 +14,7 @@ export function ThemeToggle({ className, size = 18 }: ThemeToggleProps) {
 
   return (
     <button
-      onClick={toggleTheme}
+      onClick={(e) => toggleTheme(e)}
       className={cn(
         "p-2 rounded-full transition-all duration-300 ease-out",
         "bg-bg-base shadow-neu-raised-sm hover:shadow-neu-sunken-subtle",

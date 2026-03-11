@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { flushSync } from "react-dom";
 
 type Theme = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";
@@ -9,7 +10,7 @@ interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   resolvedTheme: ResolvedTheme;
-  toggleTheme: () => void;
+  toggleTheme: (event?: React.MouseEvent) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -35,22 +36,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setMounted(true);
   }, []);
 
-  // Apply theme to document and update resolved theme
+  // Sync resolved theme with class on documentElement
   useEffect(() => {
     if (!mounted) return;
-
     const root = document.documentElement;
     const resolved: ResolvedTheme = theme === "system" ? getSystemTheme() : theme;
-
     setResolvedTheme(resolved);
     root.classList.remove("light", "dark");
     root.classList.add(resolved);
   }, [theme, mounted]);
 
-  // Listen for system theme changes
+  // Handle system theme changes
   useEffect(() => {
     if (!mounted || theme !== "system") return;
-
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => {
       const resolved = getSystemTheme();
@@ -58,9 +56,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.remove("light", "dark");
       document.documentElement.classList.add(resolved);
     };
-
     mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
+    return () => mediaQuery.addEventListener("change", handleChange);
   }, [theme, mounted]);
 
   const setTheme = useCallback((newTheme: Theme) => {
@@ -68,12 +65,53 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(STORAGE_KEY, newTheme);
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  const toggleTheme = useCallback((event?: React.MouseEvent) => {
+    const nextTheme: Theme = resolvedTheme === "dark" ? "light" : "dark";
+
+    // Fallback if View Transitions API is not supported
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const doc = document as any;
+
+    if (!doc.startViewTransition) {
+      setTheme(nextTheme);
+      return;
+    }
+
+    // Get coordinates - default to top-right corner if no event (since toggle is there)
+    const x = event?.clientX ?? window.innerWidth;
+    const y = event?.clientY ?? 0;
+
+    // Calculate distance to the farthest corner
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    const transition = doc.startViewTransition(() => {
+      // Use flushSync to ensure React updates the DOM immediately
+      flushSync(() => {
+        setTheme(nextTheme);
+      });
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 600,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          pseudoElement: "::view-transition-new(root)",
+        }
+      );
+    });
   }, [resolvedTheme, setTheme]);
 
-  // Prevent hydration mismatch by not rendering children until mounted
-  // But still render children to avoid layout shift - just don't apply theme class
+  // Provider MUST always be rendered to avoid context errors
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme, toggleTheme }}>
       {children}

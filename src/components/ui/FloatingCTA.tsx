@@ -33,9 +33,8 @@ const rotatingBorderStyles = `
       from 0deg,
       transparent 0deg,
       transparent 340deg,
-      #22e0e2 345deg,
-      #149A9B 350deg,
-      #0d7377 355deg,
+      var(--color-primary) 345deg,
+      var(--color-primary-hover) 355deg,
       transparent 360deg
     );
     animation: rotate-border 3s linear infinite;
@@ -43,7 +42,7 @@ const rotatingBorderStyles = `
 
   .animated-border-inner {
     position: relative;
-    background: #F1F3F7;
+    background: var(--color-bg-base);
     border-radius: calc(1rem - 2px);
     z-index: 1;
   }
@@ -114,47 +113,46 @@ export function FloatingCTA() {
       <style>{rotatingBorderStyles}</style>
 
       <div
-        className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ease-out ${
-          isVisible
-            ? "opacity-100 translate-y-0 scale-100"
-            : "opacity-0 translate-y-4 scale-95"
-        }`}
+        className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 transition-all duration-300 ease-out ${isVisible
+          ? "opacity-100 translate-y-0 scale-100"
+          : "opacity-0 translate-y-4 scale-95"
+          }`}
       >
         {/* Main CTA Card */}
         <div className="relative group">
           {/* Dismiss button */}
           <button
             onClick={handleDismiss}
-            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#F1F3F7] shadow-raised-sm flex items-center justify-center text-[#6D758F] hover:text-[#19213D] hover:shadow-raised-sm-hover transition-all z-20"
+            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-bg-base shadow-neu-raised-sm flex items-center justify-center text-content-secondary hover:text-content-primary hover:shadow-neu-raised-hover transition-all z-20"
             aria-label="Dismiss"
           >
             <X size={12} />
           </button>
 
           {/* Animated border wrapper */}
-          <div className="animated-border-wrapper shadow-raised hover:shadow-raised-hover transition-shadow duration-300 group-hover:translate-y-0.5">
+          <div className="animated-border-wrapper shadow-neu-raised hover:shadow-neu-raised-hover transition-shadow duration-300 group-hover:translate-y-0.5">
             {/* CTA Card */}
             <div
               onClick={handleClick}
-              className="animated-border-inner cursor-pointer p-5 max-w-[280px]"
+              className="animated-border-inner cursor-pointer px-4 py-3 md:px-6 md:py-5 max-w-[240px] md:max-w-[280px]"
             >
               <div className="flex flex-col">
                 {/* Content */}
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#149A9B] mb-1">
+                  <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-theme-primary mb-1">
                     Early Access
                   </p>
-                  <p className="text-sm font-bold text-[#19213D] leading-tight">
+                  <p className="text-xs md:text-sm font-bold text-content-primary leading-tight">
                     Join the Waitlist
                   </p>
-                  <p className="text-xs text-[#6D758F] mt-1 leading-relaxed">
+                  <p className="text-[10px] md:text-xs text-content-secondary mt-1 leading-relaxed">
                     Be first to integrate secure escrow payments
                   </p>
                 </div>
               </div>
 
               {/* CTA Button */}
-              <button className="mt-4 w-full py-2.5 rounded-xl bg-[#149A9B] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:bg-[#0d7377] transition-colors group/btn">
+              <button className="mt-3 md:mt-4 w-full py-2 md:py-2.5 rounded-xl bg-theme-primary text-white text-[10px] md:text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:bg-theme-primary-hover transition-colors group/btn">
                 Get Started
                 <ArrowRight
                   size={14}
