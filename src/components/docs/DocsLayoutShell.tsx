@@ -77,15 +77,7 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
     return () => observer.disconnect();
   }, [pathname, isHub]);
 
-  // Hub landing: full-width, no sidebar
-  if (isHub) {
-    return (
-      <div className="min-h-screen bg-transparent">
-        <Navbar />
-        {children}
-      </div>
-    );
-  }
+  // No early return for isHub to allow sidebar on the hub page
 
   return (
     <div className="min-h-screen bg-bg-base">
@@ -109,39 +101,47 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               </button>
 
               <div className="flex items-center gap-2 text-[14px] whitespace-nowrap overflow-x-auto no-scrollbar py-1">
-                <Link href="/docs" className="text-[#149A9B] hover:text-[#149A9B]/80 transition-colors font-medium flex items-center gap-1.5">
-                  <Home size={15} />
-                  Docs
-                </Link>
-                {pathSegments.map((segment, index) => {
-                  const href = `/docs/${pathSegments.slice(0, index + 1).join("/")}`;
-                  const isLast = index === pathSegments.length - 1;
-                  return (
-                    <span key={`${segment}-${index}`} className="flex items-center gap-2">
-                      <ChevronRight size={14} className="text-[#6D758F]/30" />
-                      {isLast ? (
-                        <span className="text-[#19213D]/90 font-medium">
-                          {formatSegment(segment)}
+                {!isHub ? (
+                  <>
+                    <Link href="/docs" className="text-[#149A9B] hover:text-[#149A9B]/80 transition-colors font-medium flex items-center gap-1.5">
+                      <Home size={15} />
+                      Docs
+                    </Link>
+                    {pathSegments.map((segment, index) => {
+                      const href = `/docs/${pathSegments.slice(0, index + 1).join("/")}`;
+                      const isLast = index === pathSegments.length - 1;
+                      return (
+                        <span key={`${segment}-${index}`} className="flex items-center gap-2">
+                          <ChevronRight size={14} className="text-[#6D758F]/30" />
+                          {isLast ? (
+                            <span className="text-content-primary font-medium">
+                              {formatSegment(segment)}
+                            </span>
+                          ) : (
+                            <Link href={href} className="text-content-secondary hover:text-content-primary transition-colors font-medium">
+                              {formatSegment(segment)}
+                            </Link>
+                          )}
                         </span>
-                      ) : (
-                        <Link href={href} className="text-[#19213D]/50 hover:text-[#19213D] transition-colors font-medium">
-                          {formatSegment(segment)}
-                        </Link>
-                      )}
-                    </span>
-                  );
-                })}
+                      );
+                    })}
+                  </>
+                ) : (
+                  <span className="text-content-primary font-bold tracking-tight opacity-40 italic">Documentation Index</span>
+                )}
               </div>
             </nav>
 
             {/* "Copy" Component - Compact, Neumorphic, Aligned */}
-            <div className="flex items-center justify-start md:justify-end gap-x-6">
-              <div className="hidden sm:flex items-center gap-x-6 mr-2">
-                <EditOnGitHub filePath={`content/docs/${pathname.replace("/docs/", "")}.mdx`} />
-                <ExportMarkdown slug={pathname.replace("/docs/", "")} />
+            {!isHub && (
+              <div className="flex items-center justify-start md:justify-end gap-x-6">
+                <div className="hidden sm:flex items-center gap-x-6 mr-2">
+                  <EditOnGitHub filePath={`content/docs/${pathname.replace("/docs/", "")}.mdx`} />
+                  <ExportMarkdown slug={pathname.replace("/docs/", "")} />
+                </div>
+                <DocActionsMenu slug={pathname.replace("/docs/", "")} />
               </div>
-              <DocActionsMenu slug={pathname.replace("/docs/", "")} />
-            </div>
+            )}
           </div>
         </div>
 
