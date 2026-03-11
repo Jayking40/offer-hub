@@ -57,7 +57,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.add(resolved);
     };
     mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
+    return () => mediaQuery.addEventListener("change", handleChange);
   }, [theme, mounted]);
 
   const setTheme = useCallback((newTheme: Theme) => {
@@ -69,8 +69,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const nextTheme: Theme = resolvedTheme === "dark" ? "light" : "dark";
 
     // Fallback if View Transitions API is not supported
-    // @ts-ignore
-    if (!document.startViewTransition) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const doc = document as any;
+
+    if (!doc.startViewTransition) {
       setTheme(nextTheme);
       return;
     }
@@ -85,8 +87,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       Math.max(y, window.innerHeight - y)
     );
 
-    // @ts-ignore
-    const transition = document.startViewTransition(() => {
+    const transition = doc.startViewTransition(() => {
       // Use flushSync to ensure React updates the DOM immediately
       flushSync(() => {
         setTheme(nextTheme);
@@ -120,7 +121,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const context = useContext(ThemeContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
