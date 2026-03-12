@@ -94,7 +94,7 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(true)}
-                className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-[#6D758F] hover:bg-[#149A9B]/5 hover:text-[#149A9B] transition-all"
+                className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-content-secondary hover:bg-theme-primary/10 hover:text-theme-primary transition-all shadow-neu-raised-sm bg-bg-elevated"
                 aria-label="Open docs navigation"
               >
                 <Menu size={20} />
@@ -103,9 +103,9 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               <div className="flex items-center gap-2 text-[14px] whitespace-nowrap overflow-x-auto no-scrollbar py-1">
                 {!isHub ? (
                   <>
-                    <Link href="/docs" className="text-[#149A9B] hover:text-[#149A9B]/80 transition-colors font-medium flex items-center gap-1.5">
-                      <Home size={15} />
-                      Docs
+                    <Link href="/docs" className="text-theme-primary hover:text-theme-primary/80 transition-colors font-bold tracking-tight flex items-center gap-1.5 px-2 py-1 rounded-lg bg-bg-sunken shadow-neu-sunken-subtle border border-theme-border/40">
+                      <Home size={14} className="mb-0.5" />
+                      Docs Catalog
                     </Link>
                     {pathSegments.map((segment, index) => {
                       const href = `/docs/${pathSegments.slice(0, index + 1).join("/")}`;
@@ -132,13 +132,9 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               </div>
             </nav>
 
-            {/* "Copy" Component - Compact, Neumorphic, Aligned */}
+            {/* "Copy" Component / Actions Menu - Only visible on subpages */}
             {!isHub && (
-              <div className="flex items-center justify-start md:justify-end gap-x-6">
-                <div className="hidden sm:flex items-center gap-x-6 mr-2">
-                  <EditOnGitHub filePath={`content/docs/${pathname.replace("/docs/", "")}.mdx`} />
-                  <ExportMarkdown slug={pathname.replace("/docs/", "")} />
-                </div>
+              <div className="flex items-center justify-start md:justify-end gap-x-4">
                 <DocActionsMenu slug={pathname.replace("/docs/", "")} />
               </div>
             )}
@@ -433,27 +429,28 @@ function DocActionsMenu({ slug }: { slug: string }) {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex items-center gap-2 px-6 py-2 transition-all duration-300 ease-out rounded-full text-[13px] font-medium tracking-tight",
-          "shadow-[4px_4px_8px_#d1d5db,-4px_-4px_8px_#ffffff] bg-[#F1F3F7] text-[#6D758F] hover:text-[#149A9B] hover:shadow-[inset_2px_2px_5px_#d1d5db,inset_-2px_-2px_5px_#ffffff]"
+          "flex items-center gap-2 px-5 py-2 transition-all duration-300 ease-out rounded-full text-[13.5px] font-bold tracking-tight border",
+          "bg-bg-elevated text-content-secondary shadow-neu-raised border-theme-border/50",
+          "hover:text-theme-primary hover:shadow-neu-raised-hover hover:border-theme-primary/30"
         )}
       >
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
           <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
           <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
         </svg>
-        {isExportingPdf ? "Exporting..." : "Copy"}
+        {isExportingPdf ? "Processing..." : "Copy"}
       </button>
 
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.12)] p-2 z-50 border border-[#D1D5DB]/30 animate-fadeInScale origin-top-right overflow-hidden">
-            <div className="px-4 py-2 mb-2 text-[10px] font-bold uppercase tracking-widest text-[#6D758F]/40 border-b border-[#D1D5DB]/10">
+          <div className="absolute right-0 mt-3 w-80 bg-bg-elevated rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] p-2 z-50 border border-theme-border/40 animate-fadeInScale origin-top-right overflow-hidden backdrop-blur-xl">
+            <div className="px-4 py-2 mb-2 text-[10px] font-black uppercase tracking-widest text-content-muted border-b border-theme-border/40">
               Page Actions
             </div>
             {actions.map((action, i) => {
               if (action.type === "divider") {
-                return <div key={i} className="my-1.5 border-t border-[#D1D5DB]/10 mx-3" />;
+                return <div key={i} className="my-1.5 border-t border-theme-border/40 mx-3" />;
               }
               return (
                 <button
@@ -463,22 +460,22 @@ function DocActionsMenu({ slug }: { slug: string }) {
                     action.onClick?.();
                     setIsOpen(false);
                   }}
-                  className="w-full flex items-start gap-4 p-3 rounded-xl hover:bg-[#149A9B]/5 text-left group transition-all disabled:opacity-50"
+                  className="w-full flex items-start gap-4 p-3 rounded-xl hover:bg-theme-primary/10 text-left group transition-all disabled:opacity-50"
                 >
-                  <div className="mt-0.5 shrink-0 text-[#6D758F]/60 group-hover:text-[#149A9B] transition-colors">
+                  <div className="mt-0.5 shrink-0 text-content-secondary group-hover:text-theme-primary transition-colors">
                     {action.icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[#19213D] text-[13.5px] font-semibold group-hover:text-[#149A9B] transition-colors">{action.label}</span>
+                      <span className="text-content-primary text-[13.5px] font-bold group-hover:text-theme-primary transition-colors">{action.label}</span>
                       {action.external && (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 text-[#D1D5DB] group-hover:text-[#149A9B]/40">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 text-content-muted group-hover:text-theme-primary/50">
                           <path d="M7 7h10v10M7 17L17 7" />
                         </svg>
                       )}
                     </div>
                     {action.sublabel && (
-                      <p className="text-[#6D758F]/70 text-[11px] leading-tight mt-1 font-medium group-hover:text-[#6D758F]">{action.sublabel}</p>
+                      <p className="text-content-secondary text-[11px] leading-tight mt-1 font-medium group-hover:text-content-primary">{action.sublabel}</p>
                     )}
                   </div>
                 </button>

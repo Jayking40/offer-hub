@@ -37,14 +37,14 @@ export default async function DocPage({ params }: PageProps) {
   return (
     <article className="min-w-0">
       {/* Page header */}
-      <div className="mb-8 pb-6 border-b" style={{ borderColor: "#d1d5db" }}>
+      <div className="mb-8 pb-6 border-b border-theme-border/50">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold mb-2" style={{ color: "#19213D" }}>
+            <h1 className="text-3xl font-bold mb-2 text-content-primary">
               {doc.frontmatter.title}
             </h1>
             {doc.frontmatter.description && (
-              <p className="text-base leading-relaxed" style={{ color: "#6D758F" }}>
+              <p className="text-base leading-relaxed text-content-secondary">
                 {doc.frontmatter.description}
               </p>
             )}
@@ -82,7 +82,7 @@ export default async function DocPage({ params }: PageProps) {
       />
 
       {/* Edit on GitHub link */}
-      <div className="mt-8 pt-6 border-t" style={{ borderColor: "#d1d5db" }}>
+      <div className="mt-8 pt-6 border-t border-theme-border/50">
         <EditOnGitHub filePath={`content/docs/${doc.slug}.mdx`} />
       </div>
     </article>

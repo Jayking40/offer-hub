@@ -105,7 +105,7 @@ export function CodeBlock({
     <div
       ref={containerRef}
       className={cn(
-        "relative rounded-3xl overflow-hidden my-10 border border-theme-border/40 bg-bg-elevated shadow-neu-raised-sm group transition-all duration-300 hover:border-theme-primary/30 hover:shadow-neu-raised-hover",
+        "relative z-10 rounded-3xl overflow-hidden my-10 border border-theme-border/40 bg-bg-elevated shadow-neu-raised-sm group transition-all duration-300 hover:border-theme-primary/30 hover:shadow-neu-raised-hover",
         className
       )}
     >

@@ -115,12 +115,9 @@ export default function DocsPage() {
 
             <h1
               ref={headingRef}
-              className="text-[3rem] md:text-[5rem] lg:text-[6.5rem] font-black leading-[0.85] tracking-tighter mb-8 select-none drop-shadow-[0_10px_30px_rgba(20,154,155,0.15)]"
+              className="text-[3rem] md:text-[5rem] lg:text-[6.5rem] font-black leading-[0.85] tracking-tighter mb-8 select-none drop-shadow-[0_10px_30px_rgba(20,154,155,0.15)] bg-clip-text text-transparent"
               style={{
                 WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
-                backgroundColor: "var(--color-primary)",
                 willChange: "background-image",
               }}
             >
@@ -145,8 +142,8 @@ export default function DocsPage() {
                 key={idx}
                 href={section.link}
                 className={cn(
-                  "group p-8 rounded-3xl transition-all duration-500 hover:-translate-y-2 border border-black/[0.03] dark:border-white/[0.03] bg-bg-base/50 backdrop-blur-sm",
-                  "hover:border-theme-primary/20 hover:shadow-neu-raised"
+                  "group p-8 rounded-3xl transition-all duration-500 hover:-translate-y-2 border border-theme-border/40 bg-bg-elevated backdrop-blur-sm",
+                  "hover:border-theme-primary/30 hover:shadow-neu-raised cursor-pointer"
                 )}
               >
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-8 transition-all duration-500 group-hover:scale-110 group-hover:bg-theme-primary group-hover:text-white bg-bg-sunken text-theme-primary shadow-neu-sunken-subtle">
