@@ -14,6 +14,7 @@ import { TableOfContents } from "@/components/docs/TableOfContents";
 import { Navbar } from "@/components/layout/Navbar";
 import { EditOnGitHub } from "@/components/docs/EditOnGitHub";
 import { ExportMarkdown } from "@/components/docs/ExportMarkdown";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Use production URL for AI assistant links
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://offer-hub.tech";
@@ -143,20 +144,33 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
 
         {/* SECTION 2: DOCS CONTENT GRID (Wider width as before) */}
         <div className="max-w-[1800px] mx-auto px-6 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] xl:grid-cols-[300px_minmax(0,1fr)_280px] gap-12 lg:gap-20 min-h-[calc(100vh-8rem)]">
-            <aside className="hidden lg:block">
-              <div className="sticky top-40 max-h-[calc(100vh-12rem)] flex flex-col">
-                <DocsSidebar nav={nav} className="overflow-y-auto" />
-              </div>
-            </aside>
+          <div className={cn(
+            "grid grid-cols-1 min-h-[calc(100vh-8rem)]",
+            !isHub && "lg:grid-cols-[300px_minmax(0,1fr)] xl:grid-cols-[300px_minmax(0,1fr)_280px] gap-12 lg:gap-20"
+          )}>
+            {!isHub && (
+              <aside className="hidden lg:block">
+                <div className="sticky top-40 max-h-[calc(100vh-12rem)] flex flex-col">
+                  <DocsSidebar nav={nav} className="overflow-y-auto" />
+                </div>
+              </aside>
+            )}
 
             <main className="min-w-0">
               <div className="px-1 md:px-4">
-                <div id="doc-page-export-content">
-                  {children}
-                </div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={pathname}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    id="doc-page-export-content"
+                  >
+                    {children}
+                  </motion.div>
+                </AnimatePresence>
 
-                {headings.length > 0 && (
+                {!isHub && headings.length > 0 && (
                   <div className="xl:hidden mt-20 pt-10 border-t border-[#D1D5DB]/20">
                     <TableOfContents headings={headings} />
                   </div>
@@ -164,13 +178,15 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               </div>
             </main>
 
-            <aside className="hidden xl:block">
-              {headings.length > 0 && (
-                <div className="sticky top-40 max-h-[calc(100vh-12rem)] overflow-y-auto scrollbar-thin">
-                  <TableOfContents headings={headings} />
-                </div>
-              )}
-            </aside>
+            {!isHub && (
+              <aside className="hidden xl:block">
+                {headings.length > 0 && (
+                  <div className="sticky top-40 max-h-[calc(100vh-12rem)] overflow-y-auto scrollbar-thin">
+                    <TableOfContents headings={headings} />
+                  </div>
+                )}
+              </aside>
+            )}
           </div>
         </div>
       </div>

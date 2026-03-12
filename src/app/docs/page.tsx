@@ -100,7 +100,8 @@ export default function DocsPage() {
       <div className="flex-1" id="doc-page-export-content">
         {/* Hub Header */}
         <div className="relative py-12 md:py-20 overflow-hidden">
-          {/* Background Glow */}
+          {/* Background Pattern and Glow */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: "url('/img/grid.svg')", backgroundSize: "30px" }} />
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
