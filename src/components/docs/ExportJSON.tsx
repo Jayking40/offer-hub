@@ -187,11 +187,10 @@ export function ExportJSON({ slug, title }: ExportJSONProps) {
     <button
       type="button"
       onClick={handleClick}
-      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors"
-      style={{ borderColor: "#d1d5db", color: "#19213D", background: "#ffffff" }}
+      title="Export JSON"
+      className="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 bg-bg-elevated border border-theme-border/40 shadow-neu-raised-sm text-content-secondary hover:text-theme-primary hover:border-theme-primary/30 hover:shadow-neu-raised-hover active:scale-95"
     >
-      <FileJson size={15} />
-      <span>Export JSON</span>
+      <FileJson size={16} />
     </button>
   );
 }

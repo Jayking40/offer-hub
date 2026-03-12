@@ -69,7 +69,7 @@ export function CommandLine({
     <div
       className={cn(
         // Layout & shape
-        "my-4 rounded-xl",
+        "relative z-10 my-4 rounded-xl",
         // Theme-aware background + neumorphic sunken effect
         "bg-bg-sunken shadow-neu-sunken-subtle",
         // Theme-aware border

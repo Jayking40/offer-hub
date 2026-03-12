@@ -186,15 +186,17 @@ export function DocPageActions({ slug, title, description, markdownContent }: Do
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2" data-pdf-exclude="true">
+    <div className="flex flex-wrap items-center gap-3" data-pdf-exclude="true">
+      <span className="text-[11px] font-black uppercase tracking-widest text-content-secondary/60 mr-1">
+        Export as
+      </span>
       <button
         type="button"
         onClick={handleExportMarkdown}
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors"
-        style={{ borderColor: "#d1d5db", color: "#19213D", background: "#ffffff" }}
+        title="Export Markdown"
+        className="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 bg-bg-elevated border border-theme-border/40 shadow-neu-raised-sm text-content-secondary hover:text-theme-primary hover:border-theme-primary/30 hover:shadow-neu-raised-hover active:scale-95"
       >
-        <FileCode2 size={15} />
-        Export Markdown
+        <FileCode2 size={16} />
       </button>
 
       <ExportJSON slug={slug} title={title} />
@@ -203,22 +205,22 @@ export function DocPageActions({ slug, title, description, markdownContent }: Do
         type="button"
         onClick={handleExportPdf}
         disabled={isExportingPdf}
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-        style={{ borderColor: "#149A9B", color: "#149A9B", background: "#ffffff" }}
+        title="Export PDF"
+        className="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 bg-bg-elevated border border-theme-border/40 shadow-neu-raised-sm text-content-secondary hover:text-theme-primary hover:border-theme-primary/30 hover:shadow-neu-raised-hover active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isExportingPdf ? <Download size={15} /> : <FileText size={15} />}
-        {isExportingPdf ? "Generating PDF..." : "Export as PDF"}
+        {isExportingPdf ? <Download size={16} className="animate-pulse text-theme-primary" /> : <FileText size={16} />}
       </button>
+
+      <div className="w-[1px] h-6 bg-theme-border/50 mx-1" />
 
       <a
         href={`${DOCS_REPO_BASE}/${slug}.mdx`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors"
-        style={{ borderColor: "#d1d5db", color: "#19213D", background: "#ffffff" }}
+        title="Edit on GitHub"
+        className="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 bg-bg-elevated border border-theme-border/40 shadow-neu-raised-sm text-content-secondary hover:text-theme-primary hover:border-theme-primary/30 hover:shadow-neu-raised-hover active:scale-95"
       >
-        <Github size={15} />
-        Edit on GitHub
+        <Github size={16} />
       </a>
     </div>
   );
