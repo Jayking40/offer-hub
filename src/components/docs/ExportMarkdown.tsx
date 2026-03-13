@@ -34,7 +34,7 @@ export function ExportMarkdown({ slug }: ExportMarkdownProps) {
     return (
         <button
             onClick={handleExport}
-            className="inline-flex items-center gap-1.5 text-sm text-[#6D758F] hover:text-[#149A9B] transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-content-secondary hover:text-[#149A9B] transition-colors"
         >
             <Download size={14} />
             <span>Export Markdown</span>
