@@ -10,33 +10,33 @@ interface CalloutProps {
 
 const VARIANTS: Record<
   CalloutType,
-  { icon: React.ReactNode; borderColor: string; bgColorClass: string; iconColor: string; label: string }
+  { icon: React.ReactNode; borderColor: string; bgColor: string; iconColor: string; label: string }
 > = {
   note: {
     icon: <Info size={16} />,
     borderColor: "var(--color-primary)",
-    bgColorClass: "bg-theme-primary/10",
+    bgColor: "var(--color-callout-note-bg)",
     iconColor: "var(--color-primary)",
     label: "Note",
   },
   tip: {
     icon: <Lightbulb size={16} />,
     borderColor: "var(--color-success)",
-    bgColorClass: "bg-theme-success/10",
+    bgColor: "var(--color-callout-tip-bg)",
     iconColor: "var(--color-success)",
     label: "Tip",
   },
   warning: {
     icon: <AlertTriangle size={16} />,
     borderColor: "var(--color-warning)",
-    bgColorClass: "bg-theme-warning/10",
+    bgColor: "var(--color-callout-warning-bg)",
     iconColor: "var(--color-warning)",
     label: "Warning",
   },
   danger: {
     icon: <AlertOctagon size={16} />,
     borderColor: "var(--color-error)",
-    bgColorClass: "bg-theme-error/10",
+    bgColor: "var(--color-callout-danger-bg)",
     iconColor: "var(--color-error)",
     label: "Danger",
   },
@@ -48,12 +48,10 @@ export function Callout({ type = "note", children }: CalloutProps) {
   return (
     <div
       role="note"
-      className={cn(
-        "relative z-10 rounded-xl px-4 py-3 my-5 border-l-4 shadow-neu-raised-sm bg-bg-sunken",
-        config.bgColorClass
-      )}
+      className={cn("rounded-xl px-4 py-3 my-5 border-l-4 shadow-neu-raised-sm")}
       style={{
         borderLeftColor: config.borderColor,
+        background: config.bgColor,
       }}
     >
       <div
