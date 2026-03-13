@@ -4,7 +4,6 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getAllDocSlugs, getDocBySlug } from "@/lib/mdx";
 import { MDX_COMPONENTS } from "@/components/docs/mdx-components";
 import { EditOnGitHub } from "@/components/docs/EditOnGitHub";
-import { DocPageActions } from "@/components/docs/DocPageActions";
 
 import remarkGfm from "remark-gfm";
 
@@ -37,7 +36,7 @@ export default async function DocPage({ params }: PageProps) {
   return (
     <article className="min-w-0">
       {/* Page header */}
-      <div className="mb-8 pb-6 border-b border-theme-border/50">
+      <div className="mb-8 pb-6 border-b border-theme-border/20">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold mb-2 text-content-primary">
@@ -49,13 +48,6 @@ export default async function DocPage({ params }: PageProps) {
               </p>
             )}
           </div>
-
-          <DocPageActions
-            slug={doc.slug}
-            title={doc.frontmatter.title}
-            description={doc.frontmatter.description}
-            markdownContent={doc.content}
-          />
         </div>
       </div>
 
@@ -82,7 +74,7 @@ export default async function DocPage({ params }: PageProps) {
       />
 
       {/* Edit on GitHub link */}
-      <div className="mt-8 pt-6 border-t border-theme-border/50">
+      <div className="mt-8 pt-6 border-t" style={{ borderColor: "#d1d5db" }}>
         <EditOnGitHub filePath={`content/docs/${doc.slug}.mdx`} />
       </div>
     </article>
