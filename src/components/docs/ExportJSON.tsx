@@ -188,9 +188,9 @@ export function ExportJSON({ slug, title }: ExportJSONProps) {
       type="button"
       onClick={handleClick}
       title="Export JSON"
-      className="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 bg-bg-elevated border border-theme-border/40 shadow-neu-raised-sm text-content-secondary hover:text-theme-primary hover:border-theme-primary/30 hover:shadow-neu-raised-hover active:scale-95"
+      className="neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B]"
     >
-      <FileJson size={16} />
+      <FileJson size={18} />
     </button>
   );
 }
