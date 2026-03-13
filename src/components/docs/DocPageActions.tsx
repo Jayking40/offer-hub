@@ -186,17 +186,16 @@ export function DocPageActions({ slug, title, description, markdownContent }: Do
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3" data-pdf-exclude="true">
-      <span className="text-[11px] font-black uppercase tracking-widest text-content-secondary/60 mr-1">
-        Export as
-      </span>
+    <div className="flex flex-wrap items-center justify-end gap-3" data-pdf-exclude="true">
+      <span className="text-sm font-semibold text-content-secondary mr-1">Export as</span>
+
       <button
         type="button"
         onClick={handleExportMarkdown}
         title="Export Markdown"
-        className="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 bg-bg-elevated border border-theme-border/40 shadow-neu-raised-sm text-content-secondary hover:text-theme-primary hover:border-theme-primary/30 hover:shadow-neu-raised-hover active:scale-95"
+        className="neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B]"
       >
-        <FileCode2 size={16} />
+        <FileCode2 size={18} />
       </button>
 
       <ExportJSON slug={slug} title={title} />
@@ -206,21 +205,21 @@ export function DocPageActions({ slug, title, description, markdownContent }: Do
         onClick={handleExportPdf}
         disabled={isExportingPdf}
         title="Export PDF"
-        className="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 bg-bg-elevated border border-theme-border/40 shadow-neu-raised-sm text-content-secondary hover:text-theme-primary hover:border-theme-primary/30 hover:shadow-neu-raised-hover active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B] disabled:opacity-50"
       >
-        {isExportingPdf ? <Download size={16} className="animate-pulse text-theme-primary" /> : <FileText size={16} />}
+        {isExportingPdf ? <Download size={18} /> : <FileText size={18} />}
       </button>
 
-      <div className="w-[1px] h-6 bg-theme-border/50 mx-1" />
+      <div className="w-px h-6 bg-theme-border/40 mx-2"></div>
 
       <a
         href={`${DOCS_REPO_BASE}/${slug}.mdx`}
         target="_blank"
         rel="noopener noreferrer"
         title="Edit on GitHub"
-        className="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 bg-bg-elevated border border-theme-border/40 shadow-neu-raised-sm text-content-secondary hover:text-theme-primary hover:border-theme-primary/30 hover:shadow-neu-raised-hover active:scale-95"
+        className="neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B]"
       >
-        <Github size={16} />
+        <Github size={18} />
       </a>
     </div>
   );
