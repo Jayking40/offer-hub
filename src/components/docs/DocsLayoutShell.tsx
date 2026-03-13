@@ -12,9 +12,7 @@ import type { Heading, SidebarSection } from "@/lib/mdx";
 import { DocsSidebar } from "@/components/docs/DocsSidebar";
 import { TableOfContents } from "@/components/docs/TableOfContents";
 import { Navbar } from "@/components/layout/Navbar";
-import { EditOnGitHub } from "@/components/docs/EditOnGitHub";
-import { ExportMarkdown } from "@/components/docs/ExportMarkdown";
-import { motion, AnimatePresence } from "framer-motion";
+import { FileCode2, FileJson, FileText, Github } from "lucide-react";
 
 // Use production URL for AI assistant links
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://offer-hub.tech";
@@ -95,7 +93,7 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(true)}
-                className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-content-secondary hover:bg-theme-primary/10 hover:text-theme-primary transition-all shadow-neu-raised-sm bg-bg-elevated"
+                className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-content-secondary hover:bg-[#149A9B]/5 hover:text-[#149A9B] transition-all"
                 aria-label="Open docs navigation"
               >
                 <Menu size={20} />
@@ -104,16 +102,16 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               <div className="flex items-center gap-2 text-[14px] whitespace-nowrap overflow-x-auto no-scrollbar py-1">
                 {!isHub ? (
                   <>
-                    <Link href="/docs" className="text-theme-primary hover:text-theme-primary/80 transition-colors font-bold tracking-tight flex items-center gap-1.5 px-2 py-1 rounded-lg bg-bg-sunken shadow-neu-sunken-subtle border border-theme-border/40">
-                      <Home size={14} className="mb-0.5" />
-                      Docs Catalog
+                    <Link href="/docs" className="text-[#149A9B] hover:text-[#149A9B]/80 transition-colors font-medium flex items-center gap-1.5">
+                      <Home size={15} />
+                      Docs
                     </Link>
                     {pathSegments.map((segment, index) => {
                       const href = `/docs/${pathSegments.slice(0, index + 1).join("/")}`;
                       const isLast = index === pathSegments.length - 1;
                       return (
                         <span key={`${segment}-${index}`} className="flex items-center gap-2">
-                          <ChevronRight size={14} className="text-[#6D758F]/30" />
+                          <ChevronRight size={14} className="text-content-secondary/30" />
                           {isLast ? (
                             <span className="text-content-primary font-medium">
                               {formatSegment(segment)}
@@ -133,9 +131,10 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               </div>
             </nav>
 
-            {/* "Copy" Component / Actions Menu - Only visible on subpages */}
+
+            {/* Actions toolbar */}
             {!isHub && (
-              <div className="flex items-center justify-start md:justify-end gap-x-4">
+              <div className="flex items-center justify-start md:justify-end">
                 <DocActionsMenu slug={pathname.replace("/docs/", "")} />
               </div>
             )}
@@ -144,33 +143,20 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
 
         {/* SECTION 2: DOCS CONTENT GRID (Wider width as before) */}
         <div className="max-w-[1800px] mx-auto px-6 lg:px-12">
-          <div className={cn(
-            "grid grid-cols-1 min-h-[calc(100vh-8rem)]",
-            !isHub && "lg:grid-cols-[300px_minmax(0,1fr)] xl:grid-cols-[300px_minmax(0,1fr)_280px] gap-12 lg:gap-20"
-          )}>
-            {!isHub && (
-              <aside className="hidden lg:block">
-                <div className="sticky top-40 max-h-[calc(100vh-12rem)] flex flex-col">
-                  <DocsSidebar nav={nav} className="overflow-y-auto" />
-                </div>
-              </aside>
-            )}
+          <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] xl:grid-cols-[300px_minmax(0,1fr)_280px] gap-12 lg:gap-20 min-h-[calc(100vh-8rem)]">
+            <aside className="hidden lg:block">
+              <div className="sticky top-40 max-h-[calc(100vh-12rem)] flex flex-col">
+                <DocsSidebar nav={nav} className="overflow-y-auto" />
+              </div>
+            </aside>
 
             <main className="min-w-0">
               <div className="px-1 md:px-4">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={pathname}
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
-                    id="doc-page-export-content"
-                  >
-                    {children}
-                  </motion.div>
-                </AnimatePresence>
+                <div id="doc-page-export-content">
+                  {children}
+                </div>
 
-                {!isHub && headings.length > 0 && (
+                {headings.length > 0 && (
                   <div className="xl:hidden mt-20 pt-10 border-t border-[#D1D5DB]/20">
                     <TableOfContents headings={headings} />
                   </div>
@@ -178,15 +164,13 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               </div>
             </main>
 
-            {!isHub && (
-              <aside className="hidden xl:block">
-                {headings.length > 0 && (
-                  <div className="sticky top-40 max-h-[calc(100vh-12rem)] overflow-y-auto scrollbar-thin">
-                    <TableOfContents headings={headings} />
-                  </div>
-                )}
-              </aside>
-            )}
+            <aside className="hidden xl:block">
+              {headings.length > 0 && (
+                <div className="sticky top-40 max-h-[calc(100vh-12rem)] overflow-y-auto scrollbar-thin">
+                  <TableOfContents headings={headings} />
+                </div>
+              )}
+            </aside>
           </div>
         </div>
       </div>
@@ -225,6 +209,8 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
     </div>
   );
 }
+
+import { ExportJSON } from "@/components/docs/ExportJSON";
 
 function DocActionsMenu({ slug }: { slug: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -418,7 +404,7 @@ function DocActionsMenu({ slug }: { slug: string }) {
       label: "Copy MCP URL",
       sublabel: "For Cursor, VSCode, or Windsurf",
       icon: (
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-[#19213D]">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-content-primary">
           <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
           <rect x="9" y="9" width="6" height="6" />
           <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3" />
@@ -440,66 +426,79 @@ function DocActionsMenu({ slug }: { slug: string }) {
     },
   ];
 
+  /* ─── Inline helpers ─── */
+  async function handleExportMarkdown() {
+    const el = document.getElementById("doc-metadata-for-actions");
+    const markdown = el?.getAttribute("data-markdown") || "";
+    const filename = `${slug.replace(/\//g, "-")}.md`;
+    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement("a"), { href: url, download: filename });
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }
+
+  const DOCS_REPO_BASE = "https://github.com/OFFER-HUB/offer-hub-monorepo/blob/main/content/docs";
+
+  const NEU_ICON_BTN = "neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B] transition-colors";
+  const NEU_PILL = "flex items-center gap-2 px-5 py-2 rounded-full text-[13px] font-medium tracking-tight transition-all duration-300 ease-out text-content-secondary hover:text-[#149A9B]" +
+    " shadow-[4px_4px_8px_var(--shadow-dark),-4px_-4px_8px_var(--shadow-light)] bg-[var(--color-bg-base)]" +
+    " hover:shadow-[inset_2px_2px_5px_var(--shadow-dark),inset_-2px_-2px_5px_var(--shadow-light)]";
+
   return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "flex items-center gap-2 px-5 py-2 transition-all duration-300 ease-out rounded-full text-[13.5px] font-bold tracking-tight border",
-          "bg-bg-elevated text-content-secondary shadow-neu-raised border-theme-border/50",
-          "hover:text-theme-primary hover:shadow-neu-raised-hover hover:border-theme-primary/30"
-        )}
-      >
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
-          <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-        </svg>
-        {isExportingPdf ? "Processing..." : "Copy"}
+    <div className="flex items-center gap-3">
+      {/* ── Export as ── */}
+      <span className="text-[11px] font-bold uppercase tracking-widest text-content-secondary/60 mr-1">Export as</span>
+
+      <button type="button" title="Download Markdown" onClick={handleExportMarkdown} className={NEU_ICON_BTN}>
+        <FileCode2 size={17} />
       </button>
 
-      {isOpen && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-3 w-80 bg-bg-elevated rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] p-2 z-50 border border-theme-border/40 animate-fadeInScale origin-top-right overflow-hidden backdrop-blur-xl">
-            <div className="px-4 py-2 mb-2 text-[10px] font-black uppercase tracking-widest text-content-muted border-b border-theme-border/40">
-              Page Actions
-            </div>
-            {actions.map((action, i) => {
-              if (action.type === "divider") {
-                return <div key={i} className="my-1.5 border-t border-theme-border/40 mx-3" />;
-              }
-              return (
-                <button
-                  key={i}
-                  disabled={isExportingPdf}
-                  onClick={() => {
-                    action.onClick?.();
-                    setIsOpen(false);
-                  }}
-                  className="w-full flex items-start gap-4 p-3 rounded-xl hover:bg-theme-primary/10 text-left group transition-all disabled:opacity-50"
-                >
-                  <div className="mt-0.5 shrink-0 text-content-secondary group-hover:text-theme-primary transition-colors">
-                    {action.icon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-content-primary text-[13.5px] font-bold group-hover:text-theme-primary transition-colors">{action.label}</span>
-                      {action.external && (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 text-content-muted group-hover:text-theme-primary/50">
-                          <path d="M7 7h10v10M7 17L17 7" />
-                        </svg>
-                      )}
-                    </div>
-                    {action.sublabel && (
-                      <p className="text-content-secondary text-[11px] leading-tight mt-1 font-medium group-hover:text-content-primary">{action.sublabel}</p>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
+      <ExportJSON slug={slug} title={slug} />
+
+      <button
+        type="button" title="Export PDF"
+        disabled={isExportingPdf}
+        onClick={handleExportPdf}
+        className={NEU_ICON_BTN + " disabled:opacity-50"}
+      >
+        <FileText size={17} />
+      </button>
+
+      {/* ── Divider ── */}
+      <span className="w-px h-5 bg-[var(--color-border)]/40" />
+
+      {/* ── GitHub ── */}
+      <a
+        href={`${DOCS_REPO_BASE}/${slug}.mdx`}
+        target="_blank" rel="noopener noreferrer"
+        title="Edit on GitHub"
+        className={NEU_ICON_BTN}
+      >
+        <Github size={17} />
+      </a>
+
+      {/* ── Divider ── */}
+      <span className="w-px h-5 bg-[var(--color-border)]/40" />
+
+      {/* ── Copy pill ── */}
+      <button
+        type="button"
+        title={copyStatus ? "Copied!" : "Copy page as Markdown"}
+        onClick={handleCopyMarkdown}
+        className={NEU_PILL}
+      >
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
+          {copyStatus ? (
+            <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+          ) : (
+            <>
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+            </>
+          )}
+        </svg>
+        {copyStatus ? "Copied!" : "Copy"}
+      </button>
     </div>
   );
 }
