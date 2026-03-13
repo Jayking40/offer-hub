@@ -17,24 +17,12 @@ function extractChartContent(
   chart: string | undefined,
   children: ReactNode,
 ): string {
-  // If chart prop is provided as a string, use it
-  if (typeof chart === "string" && chart.trim()) {
-    return chart.trim();
-  }
-
-  // If children is a string, use it
-  if (typeof children === "string" && children.trim()) {
-    return children.trim();
-  }
-
-  // Try to extract from children if it's a React element
+  if (typeof chart === "string" && chart.trim()) return chart.trim();
+  if (typeof children === "string" && children.trim()) return (children as string).trim();
   if (children && typeof children === "object" && "props" in children) {
-    const element = children as { props?: { children?: ReactNode } };
-    if (typeof element.props?.children === "string") {
-      return element.props.children.trim();
-    }
+    const el = children as { props?: { children?: ReactNode } };
+    if (typeof el.props?.children === "string") return el.props.children.trim();
   }
-
   return "";
 }
 
@@ -46,154 +34,173 @@ export function MermaidDiagram({
   const containerRef = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Extract the chart content from props or children
   const chartContent = extractChartContent(chart, children);
-
-  // Get the current resolved theme to support dark mode
   const { resolvedTheme } = useTheme();
 
   useEffect(() => {
-    const renderChart = async () => {
-      if (!containerRef.current || !chartContent) return;
+    let cancelled = false;
+
+    async function renderChart() {
+      if (!chartContent) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+      setSvg("");
 
       const isDark = resolvedTheme === "dark";
 
-      // Initialize mermaid with custom theme based on current color scheme
       mermaid.initialize({
         startOnLoad: false,
         theme: "base",
         themeVariables: isDark
           ? {
-              // Primary colors - dark purple background with light text
-              primaryColor: "#25253d",
+              primaryColor: "#2e2e3f",
               primaryTextColor: "#f1f3f7",
-              primaryBorderColor: "#3d3d5c",
-              // Secondary colors
-              secondaryColor: "#1a1a2e",
-              secondaryTextColor: "#f1f3f7",
+              primaryBorderColor: "#1fb8b9",
+              secondaryColor: "#242433",
+              secondaryTextColor: "#b8bfd0",
               secondaryBorderColor: "#3d3d5c",
-              // Tertiary
-              tertiaryColor: "#12121f",
+              tertiaryColor: "#1a1a26",
               tertiaryTextColor: "#f1f3f7",
-              tertiaryBorderColor: "#2a2a45",
-              // Background
-              background: "#12121f",
-              mainBkg: "#25253d",
-              // Text - light gray for readability
+              tertiaryBorderColor: "#3d3d5c",
+              background: "#242433",
+              mainBkg: "#2e2e3f",
               textColor: "#f1f3f7",
-              lineColor: "#a0a6b8",
-              // Fonts
+              lineColor: "#6D758F",
               fontFamily: "inherit",
               fontSize: "14px",
-              // Node styling
-              nodeBorder: "#3d3d5c",
+              nodeBorder: "#1fb8b9",
               nodeTextColor: "#f1f3f7",
-              clusterBkg: "#1a1a2e",
+              clusterBkg: "#2e2e3f",
               clusterBorder: "#3d3d5c",
-              // Flowchart specific
-              edgeLabelBackground: "#1a1a2e",
-              // State diagram specific
-              labelBackgroundColor: "#1a1a2e",
-              stateBkg: "#25253d",
+              edgeLabelBackground: "#2e2e3f",
+              labelBackgroundColor: "#2e2e3f",
+              stateBkg: "#2e2e3f",
               stateLabelColor: "#f1f3f7",
-              // Composite state styling
-              compositeTitleBackground: "#3d3d5c",
-              compositeBackground: "#1a1a2e",
+              compositeTitleBackground: "#1fb8b9",
+              compositeBackground: "#242433",
               compositeBorder: "#3d3d5c",
-              // Sequence diagram specific
-              noteBkgColor: "#25253d",
+              noteBkgColor: "#2e2e3f",
               noteTextColor: "#f1f3f7",
               noteBorderColor: "#3d3d5c",
-              actorBkg: "#25253d",
+              actorBkg: "#2e2e3f",
               actorTextColor: "#f1f3f7",
               actorBorder: "#3d3d5c",
             }
           : {
-              // Primary colors - light teal background with dark text
               primaryColor: "#E8F7F7",
               primaryTextColor: "#19213D",
               primaryBorderColor: "#149A9B",
-              // Secondary colors
-              secondaryColor: "#F3F4F6",
+              secondaryColor: "#F1F3F7",
               secondaryTextColor: "#19213D",
               secondaryBorderColor: "#6D758F",
-              // Tertiary
-              tertiaryColor: "#FFFFFF",
+              tertiaryColor: "#ffffff",
               tertiaryTextColor: "#19213D",
-              tertiaryBorderColor: "#D1D5DB",
-              // Background
-              background: "#FFFFFF",
+              tertiaryBorderColor: "#d1d5db",
+              background: "#ffffff",
               mainBkg: "#E8F7F7",
-              // Text - dark gray for readability
               textColor: "#19213D",
               lineColor: "#6D758F",
-              // Fonts
               fontFamily: "inherit",
               fontSize: "14px",
-              // Node styling
               nodeBorder: "#149A9B",
               nodeTextColor: "#19213D",
-              clusterBkg: "#F9FAFB",
+              clusterBkg: "#F1F3F7",
               clusterBorder: "#149A9B",
-              // Flowchart specific
-              edgeLabelBackground: "#FFFFFF",
-              // State diagram specific
-              labelBackgroundColor: "#FFFFFF",
+              edgeLabelBackground: "#ffffff",
+              labelBackgroundColor: "#ffffff",
               stateBkg: "#E8F7F7",
               stateLabelColor: "#19213D",
-              // Composite state styling
               compositeTitleBackground: "#149A9B",
-              compositeBackground: "#F9FAFB",
+              compositeBackground: "#F1F3F7",
               compositeBorder: "#149A9B",
+              noteBkgColor: "#E8F7F7",
+              noteTextColor: "#19213D",
+              noteBorderColor: "#149A9B",
+              actorBkg: "#E8F7F7",
+              actorTextColor: "#19213D",
+              actorBorder: "#149A9B",
             },
-        flowchart: {
-          htmlLabels: true,
-          curve: "basis",
-          padding: 20,
-        },
+        flowchart: { htmlLabels: true, curve: "basis", padding: 24 },
       });
 
       try {
-        // Generate unique ID for this diagram
-        const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
-
-        // Render the diagram
+        const id = `mermaid-${Math.random().toString(36).slice(2, 11)}`;
         const { svg: renderedSvg } = await mermaid.render(id, chartContent);
-        setSvg(renderedSvg);
-        setError(null);
+        if (!cancelled) {
+          setSvg(renderedSvg);
+          setError(null);
+        }
       } catch (err) {
-        console.error("Mermaid rendering error:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to render diagram",
-        );
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Failed to render diagram");
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
-    };
+    }
 
     renderChart();
-    // Re-run when chart content or theme changes
+    return () => { cancelled = true; };
   }, [chartContent, resolvedTheme]);
 
   if (error) {
     return (
-      <div className="my-8 p-4 rounded-xl border border-red-200 bg-red-50">
-        <p className="text-red-600 text-sm font-medium">
-          Failed to render diagram
-        </p>
-        <pre className="mt-2 text-xs text-red-500 overflow-auto">{error}</pre>
+      <div className="my-10 rounded-2xl overflow-hidden bg-bg-elevated p-6 border border-theme-error/30">
+        <p className="text-theme-error text-sm font-semibold">Failed to render diagram</p>
+        <pre className="mt-2 text-xs text-content-secondary overflow-auto max-h-32">{error}</pre>
       </div>
     );
   }
 
   return (
-    <figure className="my-8">
+    <figure className="my-10">
       <div
-        ref={containerRef}
-        className="w-full overflow-x-auto"
-        dangerouslySetInnerHTML={svg ? { __html: svg } : undefined}
-      />
+        className="rounded-3xl overflow-hidden bg-bg-elevated relative z-10"
+        style={{
+          boxShadow: "6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light)",
+        }}
+      >
+        <div className="flex items-center justify-between px-6 py-4 rounded-t-3xl bg-bg-sunken shadow-neu-sunken-subtle">
+          <div className="flex items-center gap-3">
+            <div className="flex gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-theme-primary/50" />
+              <span className="w-2.5 h-2.5 rounded-full bg-theme-primary/30" />
+              <span className="w-2.5 h-2.5 rounded-full bg-theme-primary/20" />
+            </div>
+            <span className="text-[11px] font-black uppercase tracking-[0.18em] font-mono text-content-secondary/80">
+              Mermaid
+            </span>
+          </div>
+        </div>
+
+        <div
+          ref={containerRef}
+          className="mermaid-diagram-canvas w-full overflow-x-auto overflow-y-hidden p-8 flex items-center justify-center min-h-[200px] bg-bg-elevated"
+        >
+          {isLoading ? (
+            <div className="flex flex-col items-center gap-3 text-content-secondary">
+              <div className="w-8 h-8 rounded-full border-2 border-theme-primary/30 border-t-theme-primary animate-spin" />
+              <span className="text-sm font-medium">Rendering diagram…</span>
+            </div>
+          ) : (
+            svg && (
+              <div
+                className="mermaid-svg-wrapper [&_svg]:max-w-full [&_svg]:h-auto [&_svg]:min-w-0"
+                dangerouslySetInnerHTML={{ __html: svg }}
+              />
+            )
+          )}
+        </div>
+      </div>
+
       {caption && (
-        <figcaption className="mt-3 text-center text-sm font-medium text-[#6D758F]">
+        <figcaption className="mt-3 text-center text-sm font-medium text-content-secondary">
           {caption}
         </figcaption>
       )}
