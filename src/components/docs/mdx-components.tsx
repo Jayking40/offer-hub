@@ -29,7 +29,7 @@ export const MDX_COMPONENTS: MDXComponents = {
         className="text-2xl font-black mt-16 mb-6 scroll-mt-32 flex items-center gap-3 tracking-tight text-content-primary"
         {...props}
       >
-        <span className="w-1 h-6 rounded-full bg-theme-primary" />
+        <span className="w-1 h-6 rounded-full bg-[#149A9B]" />
         {children}
       </h2>
     );
@@ -62,9 +62,7 @@ export const MDX_COMPONENTS: MDXComponents = {
 
   // Inline code
   code: ({ children }) => (
-    <code
-      className="px-2 py-0.5 rounded-lg text-[0.9em] font-mono font-semibold bg-bg-sunken text-theme-primary border border-theme-primary/10"
-    >
+    <code className="px-2 py-0.5 rounded-lg text-[0.9em] font-mono font-semibold bg-theme-primary/10 text-theme-primary border border-theme-primary/10">
       {children}
     </code>
   ),
@@ -103,21 +101,21 @@ export const MDX_COMPONENTS: MDXComponents = {
 
   li: ({ children }) => (
     <li className="leading-relaxed flex items-start gap-2.5">
-      <span className="mt-2.5 w-1.5 h-1.5 rounded-full bg-theme-primary/30 flex-shrink-0" />
-      <span className="flex-1 font-medium text-content-primary">{children}</span>
+      <span className="mt-2.5 w-1.5 h-1.5 rounded-full bg-[#149A9B]/30 flex-shrink-0" />
+      <span className="flex-1 font-medium">{children}</span>
     </li>
   ),
 
   // Horizontal rule
   hr: () => (
-    <hr className="my-12 border-t border-theme-border/50" />
+    <hr className="my-12 border-t border-theme-border/30" />
   ),
 
   // Links
   a: ({ href, children }) => (
     <a
       href={href}
-      className="font-bold underline decoration-2 underline-offset-4 decoration-theme-primary/30 hover:decoration-theme-primary transition-all text-theme-primary"
+      className="font-bold underline decoration-2 underline-offset-4 decoration-theme-primary/40 hover:decoration-theme-primary transition-all text-theme-primary"
       target={href?.startsWith("http") ? "_blank" : undefined}
       rel={href?.startsWith("http") ? "noopener noreferrer" : undefined}
     >
@@ -132,38 +130,38 @@ export const MDX_COMPONENTS: MDXComponents = {
     </strong>
   ),
 
-  // Tables
+  // Tables — Neumorphic raised card (consistent with rest of project)
   table: ({ children }) => (
-    <div className="my-10 w-full overflow-hidden rounded-3xl border border-theme-border/40 shadow-neu-raised bg-bg-elevated relative z-10">
+    <div className="neu-table-wrap my-10 w-full">
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left text-[14px]">
+        <table className="w-full border-collapse text-left text-sm">
           {children}
         </table>
       </div>
     </div>
   ),
   thead: ({ children }) => (
-    <thead className="bg-bg-sunken border-b border-theme-border/40">
+    <thead className="neu-table-head">
       {children}
     </thead>
   ),
   tbody: ({ children }) => (
-    <tbody className="divide-y divide-theme-border/20">
+    <tbody className="neu-table-body bg-bg-base">
       {children}
     </tbody>
   ),
   tr: ({ children }) => (
-    <tr className="group hover:bg-theme-primary/[0.02] transition-colors">
+    <tr className="neu-table-row">
       {children}
     </tr>
   ),
   th: ({ children }) => (
-    <th className="px-8 py-5 font-black uppercase tracking-[0.1em] text-[10.5px] text-content-secondary">
+    <th className="px-6 py-4 font-black uppercase tracking-[0.12em] text-[11px] text-theme-primary whitespace-nowrap">
       {children}
     </th>
   ),
   td: ({ children }) => (
-    <td className="px-8 py-5 text-content-primary font-medium leading-relaxed">
+    <td className="px-6 py-4 text-content-primary font-medium leading-relaxed text-sm border-0">
       {children}
     </td>
   ),
