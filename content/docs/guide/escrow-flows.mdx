@@ -21,8 +21,11 @@ An escrow contract is created after an order is placed and the buyer's funds are
 2. **Call the escrow creation endpoint** — Deploys a Trustless Work contract on Stellar
 3. **Wait for confirmation** — Contract becomes `ESCROW_CREATED`
 
-```
-Order Created → Funds Reserved → Contract Deploying → Contract Ready
+```mermaid
+flowchart LR
+    A[Order Created] --> B[Funds Reserved]
+    B --> C[Contract Deploying]
+    C --> D[Contract Ready]
 ```
 
 ### REST
@@ -82,8 +85,11 @@ Once the contract is deployed, the buyer's reserved USDC is transferred on-chain
 3. **Stellar confirms** — Transaction lands on-chain (5–10 seconds)
 4. **Status updates** — Order advances to `IN_PROGRESS`
 
-```
-ESCROW_CREATED → ESCROW_FUNDING → ESCROW_FUNDED → IN_PROGRESS
+```mermaid
+flowchart LR
+    A[ESCROW_CREATED] --> B[ESCROW_FUNDING]
+    B --> C[ESCROW_FUNDED]
+    C --> D[IN_PROGRESS]
 ```
 
 ### REST
@@ -123,8 +129,10 @@ Funds can be released in two ways depending on how the order is configured.
 
 The buyer approves release after a deadline or after delivery confirmation within a time window.
 
-```
-Work Delivered → Buyer Approves (or timer expires) → Funds Released
+```mermaid
+flowchart LR
+    A[Work Delivered] --> B[Buyer Approves or timer expires]
+    B --> C[Funds Released]
 ```
 
 1. Seller marks work as complete
@@ -135,10 +143,16 @@ Work Delivered → Buyer Approves (or timer expires) → Funds Released
 
 For larger projects, funds can be split across milestones. Each milestone follows its own create → fund → release cycle.
 
-```
-Milestone 1 Funded → Delivered → Released
-Milestone 2 Funded → Delivered → Released
-...
+```mermaid
+flowchart LR
+    subgraph M1["Milestone 1"]
+        A1[Funded] --> B1[Delivered]
+        B1 --> C1[Released]
+    end
+    subgraph M2["Milestone 2"]
+        A2[Funded] --> B2[Delivered]
+        B2 --> C2[Released]
+    end
 ```
 
 <Callout type="tip">
@@ -159,8 +173,10 @@ When the buyer approves the delivered work, funds are released to the seller in 
 | 2 | `release_escrow` | Platform authorizes release |
 | 3 | Claim funds | Seller receives USDC |
 
-```
-Buyer signs "complete" → Platform signs "release" → Seller claims USDC
+```mermaid
+flowchart LR
+    A[Buyer signs complete] --> B[Platform signs release]
+    B --> C[Seller claims USDC]
 ```
 
 ### REST
@@ -215,8 +231,11 @@ If the buyer believes the work was not delivered as agreed, they can open a disp
 3. **Funds remain locked** — Neither party can access the escrow
 4. **Platform reviews** — Manual or automated resolution begins
 
-```
-IN_PROGRESS → DISPUTING → DISPUTED → (resolution pending)
+```mermaid
+flowchart LR
+    A[IN_PROGRESS] --> B[DISPUTING]
+    B --> C[DISPUTED]
+    C --> D[resolution pending]
 ```
 
 ### REST
@@ -327,8 +346,11 @@ A refund can result from dispute resolution or, in some configurations, from a d
 
 ### Refund via Dispute
 
-```
-DISPUTED → Platform resolves "refund" → REFUNDED → Buyer balance credited
+```mermaid
+flowchart LR
+    A[DISPUTED] --> B[Platform resolves refund]
+    B --> C[REFUNDED]
+    C --> D[Buyer balance credited]
 ```
 
 Two on-chain transactions are required:

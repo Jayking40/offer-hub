@@ -29,35 +29,28 @@ Your marketplace communicates with the Orchestrator via REST API. The Orchestrat
 
 ## Architecture Overview
 
-```
-┌──────────────────────────────────────┐
-│           Your Marketplace           │
-│  ┌────────────┐    ┌───────────────┐ │
-│  │  Frontend  │───▶│    Backend    │ │
-│  └────────────┘    └──────┬────────┘ │
-└────────────────────────────┼─────────┘
-                             │ REST API
-                             ▼
-┌──────────────────────────────────────┐
-│        OFFER-HUB Orchestrator        │
-│                                      │
-│  ┌─────────────┐  ┌───────────────┐  │
-│  │   Balance   │  │ Escrow Engine │  │
-│  │   Ledger    │  │ State Machine │  │
-│  └─────────────┘  └───────────────┘  │
-│  ┌─────────────┐  ┌───────────────┐  │
-│  │  SSE Event  │  │ Idempotency   │  │
-│  │   Stream    │  │  Key Store    │  │
-│  └─────────────┘  └───────────────┘  │
-└──────────────┬───────────────────────┘
-               │
-   ┌───────────┴────────────┐
-   ▼                        ▼
-┌──────────────┐   ┌─────────────────────┐
-│   Stellar    │   │   Trustless Work    │
-│  Network     │   │  Soroban Contracts  │
-│  (USDC)      │   │  (Non-custodial)    │
-└──────────────┘   └─────────────────────┘
+```mermaid
+flowchart TB
+    subgraph Marketplace["Your Marketplace"]
+        Frontend[Frontend]
+        Backend[Backend]
+        Frontend --> Backend
+    end
+
+    Backend -->|REST API| Orchestrator
+
+    subgraph Orchestrator["OFFER-HUB Orchestrator"]
+        Ledger[Balance Ledger]
+        Escrow[Escrow Engine State Machine]
+        SSE[SSE Event Stream]
+        Idemp[Idempotency Key Store]
+    end
+
+    Orchestrator --> Stellar
+    Orchestrator --> Trustless
+
+    Stellar[Stellar Network USDC]
+    Trustless[Trustless Work Soroban Contracts Non-custodial]
 ```
 
 ### Key Components
@@ -125,33 +118,18 @@ The seller requests a withdrawal. The Orchestrator signs a Stellar payment trans
 
 Every escrow moves through a strict set of states. Invalid transitions are rejected with a `409 Conflict` error.
 
-```
-           ┌─────────┐
-           │ CREATED │
-           └────┬────┘
-                │ fund()
-                ▼
-           ┌─────────┐
-           │ FUNDED  │
-           └────┬────┘
-                │
-     ┌──────────┼──────────┐
-     │          │          │
-  release()  dispute()  refund()
-     │          │          │
-     ▼          ▼          ▼
-┌──────────┐ ┌─────────┐ ┌──────────┐
-│ RELEASED │ │DISPUTED │ │ REFUNDED │
-└──────────┘ └────┬────┘ └──────────┘
-                  │
-       ┌──────────┴──────────┐
-       │                     │
-  resolveToSeller()    resolveToSplit()
-       │                     │
-       ▼                     ▼
-  ┌──────────┐          ┌─────────┐
-  │ RELEASED │          │  SPLIT  │
-  └──────────┘          └─────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> CREATED: fund()
+    CREATED --> FUNDED: fund()
+    FUNDED --> RELEASED: release()
+    FUNDED --> DISPUTED: dispute()
+    FUNDED --> REFUNDED: refund()
+    DISPUTED --> RELEASED: resolveToSeller()
+    DISPUTED --> SPLIT: resolveToSplit()
+    RELEASED --> [*]
+    REFUNDED --> [*]
+    SPLIT --> [*]
 ```
 
 | State | Description |
