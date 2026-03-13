@@ -16,11 +16,11 @@ export function ThemeToggle({ className, size = 18 }: ThemeToggleProps) {
     <button
       onClick={(e) => toggleTheme(e)}
       className={cn(
-        "p-2 rounded-full transition-all duration-300 ease-out",
-        "bg-bg-base shadow-neu-raised-sm hover:shadow-neu-sunken-subtle",
-        "text-content-secondary hover:text-content-primary",
+        "neu-circle flex items-center justify-center transition-all duration-300 ease-out",
+        "text-content-secondary hover:text-[#149A9B]",
         className
       )}
+      style={{ width: "40px", height: "40px" }}
       aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
       title={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
     >
