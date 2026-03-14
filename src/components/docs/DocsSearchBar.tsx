@@ -5,7 +5,6 @@ import { Search, FileText, ChevronRight, X } from "lucide-react";
 import Fuse, { type FuseResult, type FuseResultMatch } from "fuse.js";
 import { useRouter } from "next/navigation";
 import docsIndex from "@/data/docs-index.json";
-import { Input } from "@/components/ui/Input";
 
 interface SearchResult {
     id: string;
@@ -22,6 +21,7 @@ export default function DocsSearchBar() {
     const [isOpen, setIsOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
     const searchRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
 
     const fuse = useMemo(() => new Fuse(docsIndex as SearchResult[], {
@@ -59,6 +59,17 @@ export default function DocsSearchBar() {
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+                e.preventDefault();
+                inputRef.current?.focus();
+            }
+        };
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
     }, []);
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -105,35 +116,35 @@ export default function DocsSearchBar() {
     return (
         <div className="relative w-full max-w-2xl mx-auto" ref={searchRef}>
             <div className="relative w-full">
-                <Input
-                    type="text"
-                    placeholder="Ask or search..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    icon={<Search size={20} />}
-                    iconPosition="left"
-                    className="!bg-bg-sunken !shadow-neu-sunken-subtle !text-content-primary !placeholder:text-content-secondary focus:!ring-theme-primary"
-                    rightElement={
-                        query ? (
-                            <button
-                                onClick={() => { setQuery(""); setResults([]); setIsOpen(false); }}
-                                className="text-content-secondary hover:text-content-primary transition-colors flex items-center justify-center h-full px-2"
-                            >
-                                <X size={18} />
-                            </button>
-                        ) : (
-                            <div className="flex items-center gap-1.5 pr-2 pointer-events-none text-content-secondary">
-                                <kbd className="flex items-center justify-center min-w-[24px] h-[24px] text-[11px] font-sans font-medium rounded-md shadow-neu-raised-sm bg-bg-base text-content-primary">
-                                    ⌘
-                                </kbd>
-                                <kbd className="flex items-center justify-center min-w-[24px] h-[24px] text-[11px] font-sans font-medium rounded-md shadow-neu-raised-sm bg-bg-base text-content-primary">
-                                    K
-                                </kbd>
-                            </div>
-                        )
-                    }
-                />
+                <div className="neu-input rounded-xl p-4 flex items-center gap-3">
+                    <Search className="text-content-secondary" size={18} />
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        placeholder="Ask or search..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        className="bg-transparent flex-1 outline-none text-content-primary placeholder:text-content-secondary w-full"
+                    />
+                    {query ? (
+                        <button
+                            onClick={() => { setQuery(""); setResults([]); setIsOpen(false); }}
+                            className="text-content-secondary hover:text-content-primary transition-colors flex items-center justify-center px-1"
+                        >
+                            <X size={18} />
+                        </button>
+                    ) : (
+                        <div className="flex items-center gap-1.5 pointer-events-none text-content-secondary">
+                            <kbd className="flex items-center justify-center min-w-[24px] h-[24px] text-[11px] font-sans font-medium rounded-md shadow-neu-raised-sm bg-bg-base text-content-primary">
+                                ⌘
+                            </kbd>
+                            <kbd className="flex items-center justify-center min-w-[24px] h-[24px] text-[11px] font-sans font-medium rounded-md shadow-neu-raised-sm bg-bg-base text-content-primary">
+                                K
+                            </kbd>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {isOpen && results.length > 0 && (

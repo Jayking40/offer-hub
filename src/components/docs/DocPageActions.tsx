@@ -186,15 +186,16 @@ export function DocPageActions({ slug, title, description, markdownContent }: Do
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2" data-pdf-exclude="true">
+    <div className="flex flex-wrap items-center justify-end gap-3" data-pdf-exclude="true">
+      <span className="text-sm font-semibold text-content-secondary mr-1">Export as</span>
+
       <button
         type="button"
         onClick={handleExportMarkdown}
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors"
-        style={{ borderColor: "#d1d5db", color: "#19213D", background: "#ffffff" }}
+        title="Export Markdown"
+        className="neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B]"
       >
-        <FileCode2 size={15} />
-        Export Markdown
+        <FileCode2 size={18} />
       </button>
 
       <ExportJSON slug={slug} title={title} />
@@ -203,22 +204,22 @@ export function DocPageActions({ slug, title, description, markdownContent }: Do
         type="button"
         onClick={handleExportPdf}
         disabled={isExportingPdf}
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-        style={{ borderColor: "#149A9B", color: "#149A9B", background: "#ffffff" }}
+        title="Export PDF"
+        className="neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B] disabled:opacity-50"
       >
-        {isExportingPdf ? <Download size={15} /> : <FileText size={15} />}
-        {isExportingPdf ? "Generating PDF..." : "Export as PDF"}
+        {isExportingPdf ? <Download size={18} /> : <FileText size={18} />}
       </button>
+
+      <div className="w-px h-6 bg-theme-border/40 mx-2"></div>
 
       <a
         href={`${DOCS_REPO_BASE}/${slug}.mdx`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors"
-        style={{ borderColor: "#d1d5db", color: "#19213D", background: "#ffffff" }}
+        title="Edit on GitHub"
+        className="neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B]"
       >
-        <Github size={15} />
-        Edit on GitHub
+        <Github size={18} />
       </a>
     </div>
   );

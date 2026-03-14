@@ -105,14 +105,18 @@ export function CodeBlock({
     <div
       ref={containerRef}
       className={cn(
-        "relative rounded-3xl overflow-hidden my-10 border border-theme-border/40 bg-bg-elevated shadow-neu-raised-sm group transition-all duration-300 hover:border-theme-primary/30 hover:shadow-neu-raised-hover",
+        "relative rounded-3xl overflow-hidden my-10 bg-bg-elevated group transition-all duration-300",
         className
       )}
+      style={{
+        // Neumorphic outer shadow — distinct from page background
+        boxShadow: "6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light)",
+      }}
     >
-      {/* Header bar */}
-      <div className="flex items-center justify-between px-6 py-4 bg-bg-sunken/55 border-b border-theme-border/45">
+      {/* Header bar — sunken, clean edges (no border) */}
+      <div className="flex items-center justify-between px-6 py-4 rounded-t-3xl bg-bg-sunken shadow-neu-sunken-subtle">
         <div className="flex items-center gap-3.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-bg-elevated border border-theme-border/50 shadow-neu-raised-sm transition-all duration-300 group-hover:bg-theme-primary/10 group-hover:border-theme-primary/30">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-bg-base shadow-neu-raised-sm transition-all duration-300 group-hover:bg-theme-primary/10">
             <Code2 size={16} className="text-content-secondary group-hover:text-theme-primary" />
           </div>
           <div>
@@ -131,7 +135,7 @@ export function CodeBlock({
             "relative flex items-center gap-2.5 px-4 py-2 rounded-xl text-[10.5px] font-black uppercase tracking-widest transition-all duration-300",
             copied
               ? "text-white bg-theme-primary shadow-lg shadow-theme-primary/25"
-              : "text-content-secondary bg-bg-elevated border border-theme-border/70 shadow-neu-raised-sm hover:text-content-primary hover:border-theme-primary/40 hover:bg-bg-sunken/40 active:scale-95"
+              : "text-content-secondary bg-bg-base shadow-neu-raised-sm hover:text-content-primary hover:bg-theme-primary/10 active:scale-95"
           )}
         >
           <span className="flex items-center gap-2">

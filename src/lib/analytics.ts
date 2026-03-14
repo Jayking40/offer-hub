@@ -163,7 +163,12 @@ export async function trackPageView(pagePath: string, pageTitle?: string) {
       .from('page_views')
       .insert([pageViewData])
       .then(({ error }) => {
-        if (error) console.error('Error tracking page view:', error);
+        if (error) {
+          const msg = (error as { message?: string })?.message ?? JSON.stringify(error);
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('[Analytics] Page view:', msg);
+          }
+        }
       });
 
     // Fetch geolocation in background and update visitor separately
@@ -185,7 +190,12 @@ export async function trackPageView(pagePath: string, pageTitle?: string) {
           os: getOSName(),
         }], { onConflict: 'visitor_id' })
         .then(({ error }) => {
-          if (error) console.error('Error upserting visitor:', error);
+          if (error) {
+            const msg = (error as { message?: string })?.message ?? JSON.stringify(error);
+            if (process.env.NODE_ENV === 'development') {
+              console.warn('[Analytics] Visitor upsert:', msg);
+            }
+          }
         });
     });
   } catch (error) {
