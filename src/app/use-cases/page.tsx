@@ -10,6 +10,7 @@ import {
     Globe
 } from "lucide-react";
 import { cn } from "@/lib/cn";
+import EscrowFlowDiagram from "@/components/use-cases/freelance/EscrowFlowDiagram";
 
 const PAGE_SECTIONS = [
     { id: "overview", label: "Overview" },
@@ -198,32 +199,7 @@ export default function UseCasesPage() {
                             A simplified view of the smart contract interactions orchestrated by OFFER HUB APIs.
                         </p>
 
-                        <div
-                            className="relative overflow-hidden h-[400px] md:h-[550px] rounded-[3rem] shadow-neu-sunken w-full max-w-5xl mx-auto bg-bg-base flex flex-col items-center justify-center animate-fadeInScale"
-                        >
-                            {/* Inner UI mock */}
-                            <div className="relative text-center p-8 w-full max-w-lg">
-                                <div className="w-24 h-24 rounded-3xl bg-bg-base shadow-neu-raised mx-auto mb-8 flex items-center justify-center">
-                                    <div className="w-10 h-10 rounded-full border-4 border-t-theme-primary border-r-transparent border-b-theme-primary/20 border-l-transparent animate-spin" style={{ animationDuration: '3s' }} />
-                                </div>
-                                <h3 className="text-content-muted font-black tracking-widest uppercase text-sm mb-6">
-                                    Awaiting Milestone Validation
-                                </h3>
-
-                                {/* Fake contract parameters */}
-                                <div className="w-full bg-bg-base rounded-2xl p-6 shadow-neu-sunken-subtle flex flex-col gap-4 text-left">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-xs font-bold text-content-secondary uppercase tracking-wider">Escrow Balance</span>
-                                        <span className="text-sm font-black text-theme-primary">5,000.00 USDC</span>
-                                    </div>
-                                    <div className="w-full h-px bg-theme-border" />
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-xs font-bold text-content-secondary uppercase tracking-wider">Status</span>
-                                        <span className="text-xs font-bold text-bg-base bg-content-primary px-3 py-1 rounded-full shadow-neu-raised-sm">LOCKED</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <EscrowFlowDiagram />
                     </div>
                 </section>
             </main>
