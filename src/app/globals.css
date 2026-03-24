@@ -145,7 +145,7 @@ body::before {
      Background base: #F1F3F7 · Dark shadow: #d1d5db · Light highlight: #ffffff */
 
   .shadow-raised {
-    box-shadow: 6px 6px 12px #d1d5db, -6px -6px 12px #ffffff;
+    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
   }
 
   .shadow-raised-hover {
@@ -165,7 +165,7 @@ body::before {
   }
 
   .shadow-sunken-subtle {
-    box-shadow: inset 2px 2px 4px #d1d5db, inset -2px -2px 4px #ffffff;
+    box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
   }
 
   /* For the navbar: flat surface elevation (bottom-only) */
