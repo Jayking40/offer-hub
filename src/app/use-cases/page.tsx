@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
     Users,
     ShieldCheck,
@@ -13,71 +13,129 @@ import { cn } from "@/lib/cn";
 import EscrowFlowDiagram from "@/components/use-cases/freelance/EscrowFlowDiagram";
 
 const PAGE_SECTIONS = [
-    { id: "overview", label: "Overview" },
-    { id: "features", label: "Features" },
-    { id: "architecture", label: "Architecture" },
-];
+    { id: "overview", label: "Overview", icon: Users },
+    { id: "features", label: "Features", icon: Zap },
+    { id: "architecture", label: "Architecture", icon: Globe },
+] as const;
+
+/** Offset (px) matching the sticky header height + breathing room */
+const SCROLL_OFFSET = 140;
 
 export default function UseCasesPage() {
-    const [activeSection, setActiveSection] = useState("overview");
+    const [activeSection, setActiveSection] = useState<string>(PAGE_SECTIONS[0].id);
     const [isNavPinned, setIsNavPinned] = useState(false);
-    const navRef = useRef<HTMLDivElement>(null);
+    const [pillStyle, setPillStyle] = useState<{ left: number; width: number } | null>(null);
+    const [touchedId, setTouchedId] = useState<string | null>(null);
 
+    const navRef = useRef<HTMLDivElement>(null);
+    const pillContainerRef = useRef<HTMLDivElement>(null);
+    const linkRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
+
+    const setLinkRef = useCallback((id: string, el: HTMLAnchorElement | null) => {
+        if (el) linkRefs.current.set(id, el);
+        else linkRefs.current.delete(id);
+    }, []);
+
+    /* ── Measure the active link and position the traveling indicator ── */
+    const updatePillIndicator = useCallback(() => {
+        const container = pillContainerRef.current;
+        const activeLink = linkRefs.current.get(activeSection);
+        if (!container || !activeLink) return;
+
+        const containerRect = container.getBoundingClientRect();
+        const linkRect = activeLink.getBoundingClientRect();
+
+        setPillStyle({
+            left: linkRect.left - containerRect.left,
+            width: linkRect.width,
+        });
+    }, [activeSection]);
+
+    /* ── IntersectionObserver: robust scroll-spy without flickering ── */
     useEffect(() => {
+        const sectionElements = PAGE_SECTIONS
+            .map((s) => document.getElementById(s.id))
+            .filter(Boolean) as HTMLElement[];
+
+        if (sectionElements.length === 0) return;
+
+        const visibilityMap = new Map<string, number>();
+
         const observer = new IntersectionObserver(
             (entries) => {
-                let mostVisibleEntry = entries[0];
                 entries.forEach((entry) => {
-                    if (entry.intersectionRatio > mostVisibleEntry.intersectionRatio) {
-                        mostVisibleEntry = entry;
+                    visibilityMap.set(entry.target.id, entry.intersectionRatio);
+                });
+
+                let bestId: string = activeSection;
+                let bestRatio = -1;
+
+                visibilityMap.forEach((ratio, id) => {
+                    if (ratio > bestRatio) {
+                        bestRatio = ratio;
+                        bestId = id;
                     }
                 });
-                if (mostVisibleEntry.isIntersecting) {
-                    setActiveSection(mostVisibleEntry.target.id);
+
+                if (bestRatio > 0.05 && bestId !== activeSection) {
+                    setActiveSection(bestId);
                 }
             },
-            { threshold: [0.1, 0.5, 0.9], rootMargin: "-20% 0px -20% 0px" }
+            {
+                threshold: [0, 0.1, 0.25, 0.4, 0.6, 0.75, 1],
+                rootMargin: "-140px 0px -30% 0px",
+            }
         );
 
-        PAGE_SECTIONS.forEach((section) => {
-            const element = document.getElementById(section.id);
-            if (element) observer.observe(element);
-        });
+        sectionElements.forEach((el) => observer.observe(el));
 
+        return () => observer.disconnect();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    /* ── Scroll handler: pin detection via rAF ── */
+    useEffect(() => {
         let ticking = false;
+
         const handleScroll = () => {
-            if (!ticking) {
-                ticking = true;
-                requestAnimationFrame(() => {
-                    if (navRef.current) {
-                        setIsNavPinned(navRef.current.getBoundingClientRect().top <= 81);
-                    }
-                    ticking = false;
-                });
-            }
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+                if (navRef.current) {
+                    setIsNavPinned(navRef.current.getBoundingClientRect().top <= 81);
+                }
+                ticking = false;
+            });
         };
 
         window.addEventListener("scroll", handleScroll, { passive: true });
-        return () => {
-            observer.disconnect();
-            window.removeEventListener("scroll", handleScroll);
-        };
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    /* ── Re-measure the traveling indicator whenever the active section changes ── */
+    useEffect(() => {
+        updatePillIndicator();
+    }, [activeSection, updatePillIndicator]);
+
+    /* ── Also re-measure on resize (orientation changes, etc.) ── */
+    useEffect(() => {
+        const onResize = () => updatePillIndicator();
+        window.addEventListener("resize", onResize, { passive: true });
+        return () => window.removeEventListener("resize", onResize);
+    }, [updatePillIndicator]);
 
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
         e.preventDefault();
-        const element = document.getElementById(id);
-        if (element) {
-            const offset = 140;
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - offset;
+        const target = document.getElementById(id);
+        if (!target) return;
 
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: "smooth",
-            });
-        }
+        const top = target.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+        window.scrollTo({ top, behavior: "smooth" });
     };
+
+    /* ── Touch handlers for haptic-like visual feedback ── */
+    const handleTouchStart = (id: string) => setTouchedId(id);
+    const handleTouchEnd = () => setTouchedId(null);
 
     return (
         <div className="bg-transparent min-h-[100dvh]">
@@ -85,7 +143,11 @@ export default function UseCasesPage() {
 
             <main>
                 {/* ── Hero / Overview Section ── */}
-                <section id="overview" className="pt-40 pb-20 relative overflow-hidden bg-transparent">
+                <section
+                    id="overview"
+                    className="pt-40 pb-20 relative overflow-hidden bg-transparent"
+                    style={{ scrollMarginTop: `${SCROLL_OFFSET}px` }}
+                >
                     <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 text-center flex flex-col items-center">
                         <div
                             className="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.2em] mb-8 shadow-neu-raised animate-fadeIn text-theme-primary bg-bg-base"
@@ -110,38 +172,84 @@ export default function UseCasesPage() {
                 </section>
 
                 {/* ── Sticky Navigation (Neumorphic Pill) ── */}
-                <div ref={navRef} className="sticky top-[80px] z-40 py-6 pointer-events-none">
-                    <div className="max-w-3xl mx-auto px-6 flex justify-center">
+                <div
+                    ref={navRef}
+                    className={cn(
+                        "sticky z-40 pointer-events-none",
+                        "top-[80px] py-6",
+                        "md:top-[80px]",
+                    )}
+                >
+                    <div className="max-w-3xl mx-auto px-4 sm:px-6 flex justify-center">
                         <div
                             className={cn(
-                                "pointer-events-auto flex items-center p-2 rounded-2xl transition-all duration-500 bg-bg-base",
+                                "pointer-events-auto relative flex items-center p-1.5 sm:p-2 rounded-2xl bg-bg-base",
+                                "transition-shadow duration-500 will-change-[box-shadow]",
                                 isNavPinned ? "shadow-neu-raised-scrolled" : "shadow-neu-raised"
                             )}
                         >
-                            <div className="flex items-center gap-2">
-                                {PAGE_SECTIONS.map((section) => (
-                                    <a
-                                        key={section.id}
-                                        id={`nav-link-${section.id}`}
-                                        href={`#${section.id}`}
-                                        onClick={(e) => handleNavClick(e, section.id)}
-                                        className={cn(
-                                            "relative px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
-                                            activeSection === section.id
-                                                ? "btn-neumorphic-primary"
-                                                : "text-content-secondary hover:text-content-primary hover:shadow-neu-sunken-subtle"
-                                        )}
-                                    >
-                                        {section.label}
-                                    </a>
-                                ))}
+                            <div
+                                ref={pillContainerRef}
+                                className="relative flex items-center gap-1 sm:gap-2"
+                            >
+                                {/* Traveling indicator behind the active link */}
+                                {pillStyle && (
+                                    <span
+                                        className="absolute top-0 h-full rounded-xl btn-neumorphic-primary pointer-events-none"
+                                        aria-hidden="true"
+                                        style={{
+                                            left: pillStyle.left,
+                                            width: pillStyle.width,
+                                            transition: "left 350ms cubic-bezier(0.25, 1, 0.5, 1), width 300ms ease-out",
+                                            willChange: "left, width",
+                                        }}
+                                    />
+                                )}
+
+                                {PAGE_SECTIONS.map((section) => {
+                                    const isActive = activeSection === section.id;
+                                    const isTouched = touchedId === section.id;
+                                    const SectionIcon = section.icon;
+
+                                    return (
+                                        <a
+                                            key={section.id}
+                                            ref={(el) => setLinkRef(section.id, el)}
+                                            id={`nav-link-${section.id}`}
+                                            href={`#${section.id}`}
+                                            onClick={(e) => handleNavClick(e, section.id)}
+                                            onTouchStart={() => handleTouchStart(section.id)}
+                                            onTouchEnd={handleTouchEnd}
+                                            onTouchCancel={handleTouchEnd}
+                                            className={cn(
+                                                "relative z-10 flex items-center gap-1.5",
+                                                "min-w-[44px] min-h-[44px] px-4 sm:px-6 py-2.5",
+                                                "rounded-xl text-xs sm:text-sm font-bold",
+                                                "transition-all duration-300 select-none",
+                                                "touch-manipulation",
+                                                isActive
+                                                    ? "text-white"
+                                                    : "text-content-secondary hover:text-content-primary",
+                                                !isActive && "hover:shadow-neu-sunken-subtle",
+                                                isTouched && !isActive && "shadow-neu-sunken-subtle scale-[0.96]",
+                                            )}
+                                        >
+                                            <SectionIcon size={14} className="hidden sm:block flex-shrink-0" />
+                                            {section.label}
+                                        </a>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* ── Features Section ── */}
-                <section id="features" className="py-24 scroll-mt-24 relative bg-transparent">
+                <section
+                    id="features"
+                    className="py-24 relative bg-transparent"
+                    style={{ scrollMarginTop: `${SCROLL_OFFSET}px` }}
+                >
                     <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             {/* Feature 1 */}
@@ -181,7 +289,11 @@ export default function UseCasesPage() {
                 </section>
 
                 {/* ── Architecture Section ── */}
-                <section id="architecture" className="py-24 scroll-mt-24 relative bg-transparent">
+                <section
+                    id="architecture"
+                    className="py-24 relative bg-transparent"
+                    style={{ scrollMarginTop: `${SCROLL_OFFSET}px` }}
+                >
                     <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 text-center">
                         <div className="w-16 h-16 rounded-2xl shadow-neu-raised bg-bg-base mx-auto mb-8 flex items-center justify-center text-theme-primary">
                             <Users size={24} />

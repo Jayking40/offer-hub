@@ -73,6 +73,7 @@ const config: Config = {
         "neu-raised-hover": "2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light)",
         "neu-sunken": "inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light)",
         "neu-sunken-subtle": "inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light)",
+        "neu-raised-scrolled": "8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light)",
       },
     },
   },
