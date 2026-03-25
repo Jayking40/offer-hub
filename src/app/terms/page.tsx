@@ -6,23 +6,23 @@ import { FileText, Shield, Scale, HelpCircle } from "lucide-react";
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F1F3F7]">
+    <div className="min-h-screen flex flex-col bg-bg-base text-content-primary">
       <Navbar />
 
       <main className="flex-grow pt-32 pb-24 px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <header className="text-center mb-20 animate-fadeInUp">
-            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-[#149A9B] mb-4">Legal Framework</p>
-            <h1 className="text-4xl md:text-6xl font-black text-[#19213D] tracking-tighter leading-none mb-6">
-              Platform <span className="text-[#149A9B]">Terms</span>
+            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-theme-primary mb-4">Legal Framework</p>
+            <h1 className="text-4xl md:text-6xl font-black text-content-primary tracking-tighter leading-none mb-6">
+              Platform <span className="text-theme-primary">Terms</span>
             </h1>
-            <p className="text-lg text-[#6D758F] font-medium max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-content-secondary font-medium max-w-2xl mx-auto leading-relaxed">
               These terms outline the agreement between you and OFFER-HUB.
               By using our tools, you agree to these principles of operation.
             </p>
-            <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F1F3F7] shadow-raised-sm text-xs font-bold text-[#6D758F]">
-              Last updated: <span className="text-[#149A9B]">February 25, 2026</span>
+            <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-bg-elevated shadow-raised-sm text-xs font-bold text-content-secondary">
+              Last updated: <span className="text-theme-primary">February 25, 2026</span>
             </div>
           </header>
 
@@ -79,24 +79,24 @@ export default function TermsOfServicePage() {
               return (
                 <section
                   key={section.id}
-                  className="p-8 md:p-12 rounded-[2.5rem] bg-[#F1F3F7] shadow-raised"
+                  className="p-8 md:p-12 rounded-[2.5rem] bg-bg-base shadow-raised"
                 >
                   <div className="flex items-center gap-5 mb-8">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#F1F3F7] shadow-sunken-subtle text-[#149A9B]">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-bg-base shadow-sunken-subtle text-theme-primary">
                       <Icon size={20} />
                     </div>
-                    <h2 className="text-2xl font-black text-[#19213D] tracking-tight">{section.title}</h2>
+                    <h2 className="text-2xl font-black text-content-primary tracking-tight">{section.title}</h2>
                   </div>
 
-                  <p className="text-base font-medium leading-relaxed text-[#6D758F] mb-6">
+                  <p className="text-base font-medium leading-relaxed text-content-secondary mb-6">
                     {section.content}
                   </p>
 
                   {section.bullets && (
                     <ul className="space-y-4">
                       {section.bullets.map((bullet, i) => (
-                        <li key={i} className="flex items-start gap-4 text-sm font-medium text-[#19213D]">
-                          <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#149A9B] shrink-0" />
+                        <li key={i} className="flex items-start gap-4 text-sm font-medium text-content-primary">
+                          <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-theme-primary shrink-0" />
                           <span>{bullet}</span>
                         </li>
                       ))}
@@ -107,10 +107,10 @@ export default function TermsOfServicePage() {
                     <a
                       key={i}
                       href={`mailto:${email.address}`}
-                      className="inline-flex flex-col gap-0.5 mt-4 mr-4 p-5 rounded-2xl bg-[#F1F3F7] shadow-sunken-subtle hover:shadow-sunken transition-all group"
+                      className="inline-flex flex-col gap-0.5 mt-4 mr-4 p-5 rounded-2xl bg-bg-base shadow-sunken-subtle hover:shadow-sunken transition-all group"
                     >
-                      <span className="text-[10px] font-black uppercase tracking-widest text-[#6D758F]">{email.label}</span>
-                      <span className="text-sm font-bold text-[#149A9B] group-hover:text-[#19213D] transition-colors">{email.address}</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-content-secondary">{email.label}</span>
+                      <span className="text-sm font-bold text-theme-primary group-hover:text-content-primary transition-colors">{email.address}</span>
                     </a>
                   )))}
                 </section>
